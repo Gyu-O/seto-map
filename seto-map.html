@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_7267f6a5c0d852471b1e71ed4983f1b9 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_7267f6a5c0d852471b1e71ed4983f1b9" ></div>
+        
+    
+<style>
+  .toggle-box {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 9999;
+    background: rgba(255,255,255,0.92);
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", sans-serif;
+    min-width: 140px;
+  }
+
+  .toggle-title {
+    font-size: 12px;
+    color: rgba(0,0,0,0.45);
+    padding: 0 8px 6px 8px;
+  }
+
+  .toggle-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .toggle-item:hover {
+    background: rgba(0,0,0,0.04);
+  }
+
+  .sq {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    background: rgba(160,160,160,0.25);  /* OFF：薄いグレー */
+    flex: 0 0 auto;
+  }
+
+  .label {
+    font-size: 13px;
+    color: rgba(0,0,0,0.78);
+    letter-spacing: 0.02em;
+  }
+
+  .on-sake .sq {
+    background: rgba(0,102,204,0.5);     /* 酒蔵ON：青 */
+  }
+
+  .on-jinja .sq {
+    background: rgba(26,127,55,0.5);     /* 寺社ON：緑 */
+  }
+</style>
+
+<div class="toggle-box" id="customToggle">
+  <div class="toggle-title">Layers</div>
+
+  <div class="toggle-item on-sake" id="btn-sake">
+    <span class="sq"></span>
+    <span class="label">酒蔵</span>
+  </div>
+
+  <div class="toggle-item on-jinja" id="btn-jinja">
+    <span class="sq"></span>
+    <span class="label">寺社</span>
+  </div>
+</div>
+
+<script>
+(function() {
+  function initWhenReady() {
+    var map = map_7267f6a5c0d852471b1e71ed4983f1b9;
+    var layerSake = feature_group_0f8dddb97c206c3db57bde28e4e4f2d0;
+    var layerJinja = feature_group_1baf587f215a4789a6d2f7863d323b53;
+
+    var btnSake = document.getElementById("btn-sake");
+    var btnJinja = document.getElementById("btn-jinja");
+    var box = document.getElementById("customToggle");
+
+    if (!btnSake || !btnJinja || !box || typeof map === "undefined") {
+      setTimeout(initWhenReady, 50);
+      return;
+    }
+
+    if (window.L && L.DomEvent) {
+      L.DomEvent.disableClickPropagation(box);
+      L.DomEvent.disableScrollPropagation(box);
+    }
+
+    function setBtn(btn, on, cls) {
+      if (on) btn.classList.add(cls);
+      else btn.classList.remove(cls);
+    }
+
+    setBtn(btnSake, map.hasLayer(layerSake), "on-sake");
+    setBtn(btnJinja, map.hasLayer(layerJinja), "on-jinja");
+
+    btnSake.onclick = function() {
+      if (map.hasLayer(layerSake)) {
+        map.removeLayer(layerSake);
+        setBtn(btnSake, false, "on-sake");
+      } else {
+        map.addLayer(layerSake);
+        setBtn(btnSake, true, "on-sake");
+      }
+    };
+
+    btnJinja.onclick = function() {
+      if (map.hasLayer(layerJinja)) {
+        map.removeLayer(layerJinja);
+        setBtn(btnJinja, false, "on-jinja");
+      } else {
+        map.addLayer(layerJinja);
+        setBtn(btnJinja, true, "on-jinja");
+      }
+    };
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initWhenReady);
+  } else {
+    initWhenReady();
+  }
+})();
+</script>
+</body>
+<script>
+    
+    
+            var map_7267f6a5c0d852471b1e71ed4983f1b9 = L.map(
+                "map_7267f6a5c0d852471b1e71ed4983f1b9",
+                {
+                    center: [34.295, 132.81],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 12,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_a84d341bafe810d0a8209d96780d5460 = L.tileLayer(
+                "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 18,
+  "maxNativeZoom": 18,
+  "noWrap": false,
+  "attribution": "\u00a9 CARTO, \u00a9 OpenStreetMap",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_a84d341bafe810d0a8209d96780d5460.addTo(map_7267f6a5c0d852471b1e71ed4983f1b9);
+        
+    
+            var feature_group_0f8dddb97c206c3db57bde28e4e4f2d0 = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var marker_fa1abb4aa4b0056c796166cd8af4f577 = L.marker(
+                [34.31903341455433, 132.8165584534892],
+                {
+}
+            ).addTo(feature_group_0f8dddb97c206c3db57bde28e4e4f2d0);
+        
+    
+            var div_icon_76477d3c7ab777efe7353944c4915931 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n                width:8px;\n                height:8px;\n                background:#c40000;\n                opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_f1046a34969fc767f92deffb49ef4483 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_18500998f435d09a17908c0404455721 = $(`<div id="html_18500998f435d09a17908c0404455721" style="width: 100.0%; height: 100.0%;"><a href="https://www.tsukasyuzou.jp/" target="_blank">柄酒造</a></div>`)[0];
+                popup_f1046a34969fc767f92deffb49ef4483.setContent(html_18500998f435d09a17908c0404455721);
+            
+        
+
+        marker_fa1abb4aa4b0056c796166cd8af4f577.bindPopup(popup_f1046a34969fc767f92deffb49ef4483)
+        ;
+
+        
+    
+    
+                marker_fa1abb4aa4b0056c796166cd8af4f577.setIcon(div_icon_76477d3c7ab777efe7353944c4915931);
+            
+    
+            var marker_f748950e2640d4313db380c81e9d0699 = L.marker(
+                [34.319820014547, 132.81978976386438],
+                {
+}
+            ).addTo(feature_group_0f8dddb97c206c3db57bde28e4e4f2d0);
+        
+    
+            var div_icon_84b3764817807d584b22392084fa16da = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n                width:8px;\n                height:8px;\n                background:#0066cc;\n                opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_dd88bce96c48843283423fc87c057ab9 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_234a5397d99e3849b3c063bd36182984 = $(`<div id="html_234a5397d99e3849b3c063bd36182984" style="width: 100.0%; height: 100.0%;"><a href="https://fukucho.jp/" target="_blank">今田酒造</a></div>`)[0];
+                popup_dd88bce96c48843283423fc87c057ab9.setContent(html_234a5397d99e3849b3c063bd36182984);
+            
+        
+
+        marker_f748950e2640d4313db380c81e9d0699.bindPopup(popup_dd88bce96c48843283423fc87c057ab9)
+        ;
+
+        
+    
+    
+                marker_f748950e2640d4313db380c81e9d0699.setIcon(div_icon_84b3764817807d584b22392084fa16da);
+            
+    
+            var marker_5210e41bd57df255e22a15bbce72a3b3 = L.marker(
+                [34.340883148374154, 132.90370870919548],
+                {
+}
+            ).addTo(feature_group_0f8dddb97c206c3db57bde28e4e4f2d0);
+        
+    
+            var div_icon_5a74f5b5eed5960a2dacaf8cc7279a8f = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n                width:8px;\n                height:8px;\n                background:#0066cc;\n                opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_a1694346fd15ed147be4f64e1caa088c = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_9d1928bfac104fc7269f70ea65ee682a = $(`<div id="html_9d1928bfac104fc7269f70ea65ee682a" style="width: 100.0%; height: 100.0%;"><a href="http://www.maboroshi.co.jp/company/" target="_blank">中尾醸造</a></div>`)[0];
+                popup_a1694346fd15ed147be4f64e1caa088c.setContent(html_9d1928bfac104fc7269f70ea65ee682a);
+            
+        
+
+        marker_5210e41bd57df255e22a15bbce72a3b3.bindPopup(popup_a1694346fd15ed147be4f64e1caa088c)
+        ;
+
+        
+    
+    
+                marker_5210e41bd57df255e22a15bbce72a3b3.setIcon(div_icon_5a74f5b5eed5960a2dacaf8cc7279a8f);
+            
+    
+            var marker_0f987abafd4464b12ef554f2516c5d95 = L.marker(
+                [34.34607639696198, 132.91133263803098],
+                {
+}
+            ).addTo(feature_group_0f8dddb97c206c3db57bde28e4e4f2d0);
+        
+    
+            var div_icon_aa561078080c3a767ddaca4c3688b8cd = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n                width:8px;\n                height:8px;\n                background:#0066cc;\n                opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_7058e908584b0243008812f8b1dec54c = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_1df3c434c21672c6f203374ef0015609 = $(`<div id="html_1df3c434c21672c6f203374ef0015609" style="width: 100.0%; height: 100.0%;"><a href="https://www.taketsuru-shuzou.co.jp/" target="_blank">竹鶴酒造</a></div>`)[0];
+                popup_7058e908584b0243008812f8b1dec54c.setContent(html_1df3c434c21672c6f203374ef0015609);
+            
+        
+
+        marker_0f987abafd4464b12ef554f2516c5d95.bindPopup(popup_7058e908584b0243008812f8b1dec54c)
+        ;
+
+        
+    
+    
+                marker_0f987abafd4464b12ef554f2516c5d95.setIcon(div_icon_aa561078080c3a767ddaca4c3688b8cd);
+            
+    
+            var marker_31846035f8570898dbc146af426fc854 = L.marker(
+                [34.34713475686066, 132.9087803533732],
+                {
+}
+            ).addTo(feature_group_0f8dddb97c206c3db57bde28e4e4f2d0);
+        
+    
+            var div_icon_5d590c7746dcbdf5af2ccb65341ea27d = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n                width:8px;\n                height:8px;\n                background:#0066cc;\n                opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_c89b620fe802200e98485013e786b3b8 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_344f9d4acbe3fa968fbc634b3a76f1f8 = $(`<div id="html_344f9d4acbe3fa968fbc634b3a76f1f8" style="width: 100.0%; height: 100.0%;"><a href="https://www.fujiishuzou.com/" target="_blank">藤井酒造</a></div>`)[0];
+                popup_c89b620fe802200e98485013e786b3b8.setContent(html_344f9d4acbe3fa968fbc634b3a76f1f8);
+            
+        
+
+        marker_31846035f8570898dbc146af426fc854.bindPopup(popup_c89b620fe802200e98485013e786b3b8)
+        ;
+
+        
+    
+    
+                marker_31846035f8570898dbc146af426fc854.setIcon(div_icon_5d590c7746dcbdf5af2ccb65341ea27d);
+            
+    
+            var marker_2444a0189eb1fa45c20979717f387041 = L.marker(
+                [34.356573371792784, 133.08298394422584],
+                {
+}
+            ).addTo(feature_group_0f8dddb97c206c3db57bde28e4e4f2d0);
+        
+    
+            var div_icon_62a8eb6e44630213f8195bd0d1b637a0 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n                width:8px;\n                height:8px;\n                background:#0066cc;\n                opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_b25d2ab58ce813c41ca68622b92b3c9a = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_79d7369ecb03030046cdc0129f2c741e = $(`<div id="html_79d7369ecb03030046cdc0129f2c741e" style="width: 100.0%; height: 100.0%;"><a href="https://shop.setouchijozojo.jp/" target="_blank">瀬戸内醸造所</a></div>`)[0];
+                popup_b25d2ab58ce813c41ca68622b92b3c9a.setContent(html_79d7369ecb03030046cdc0129f2c741e);
+            
+        
+
+        marker_2444a0189eb1fa45c20979717f387041.bindPopup(popup_b25d2ab58ce813c41ca68622b92b3c9a)
+        ;
+
+        
+    
+    
+                marker_2444a0189eb1fa45c20979717f387041.setIcon(div_icon_62a8eb6e44630213f8195bd0d1b637a0);
+            
+    
+            var marker_81413587e033547f855aefbae98b5045 = L.marker(
+                [34.43081002035992, 132.74690821784034],
+                {
+}
+            ).addTo(feature_group_0f8dddb97c206c3db57bde28e4e4f2d0);
+        
+    
+            var div_icon_9441483849e8a45b0d3313b1bee75fb8 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n                width:8px;\n                height:8px;\n                background:#0066cc;\n                opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_e3d66554834211f5fb809ebf9dbefb93 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_091b7e43f0e658585a187ae4ae38bbf4 = $(`<div id="html_091b7e43f0e658585a187ae4ae38bbf4" style="width: 100.0%; height: 100.0%;"><a href="https://www.kamotsuru.jp/" target="_blank">賀茂鶴酒造</a></div>`)[0];
+                popup_e3d66554834211f5fb809ebf9dbefb93.setContent(html_091b7e43f0e658585a187ae4ae38bbf4);
+            
+        
+
+        marker_81413587e033547f855aefbae98b5045.bindPopup(popup_e3d66554834211f5fb809ebf9dbefb93)
+        ;
+
+        
+    
+    
+                marker_81413587e033547f855aefbae98b5045.setIcon(div_icon_9441483849e8a45b0d3313b1bee75fb8);
+            
+    
+            var marker_e22a11a453101aadd95c67f1fdb53739 = L.marker(
+                [34.43067620914356, 132.7484354835056],
+                {
+}
+            ).addTo(feature_group_0f8dddb97c206c3db57bde28e4e4f2d0);
+        
+    
+            var div_icon_a89da79e05848033138cd29deb7192e4 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n                width:8px;\n                height:8px;\n                background:#0066cc;\n                opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_fcf7d0f5cf386d586de217eb2f884479 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_a46adf86b35d2601206a3c818a30b30a = $(`<div id="html_a46adf86b35d2601206a3c818a30b30a" style="width: 100.0%; height: 100.0%;"><a href="https://www.fukubijin.co.jp/" target="_blank">福美人酒造</a></div>`)[0];
+                popup_fcf7d0f5cf386d586de217eb2f884479.setContent(html_a46adf86b35d2601206a3c818a30b30a);
+            
+        
+
+        marker_e22a11a453101aadd95c67f1fdb53739.bindPopup(popup_fcf7d0f5cf386d586de217eb2f884479)
+        ;
+
+        
+    
+    
+                marker_e22a11a453101aadd95c67f1fdb53739.setIcon(div_icon_a89da79e05848033138cd29deb7192e4);
+            
+    
+            var marker_e4e6714e2ae670d7315e59ea34727657 = L.marker(
+                [34.430171955504484, 132.74557604173015],
+                {
+}
+            ).addTo(feature_group_0f8dddb97c206c3db57bde28e4e4f2d0);
+        
+    
+            var div_icon_30624eac3396e90a3da8620ac26acc43 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n                width:8px;\n                height:8px;\n                background:#0066cc;\n                opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_39a789322955a19b86f2045a96d3d32d = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_1f5db0064271f7ae2391c41b014e7138 = $(`<div id="html_1f5db0064271f7ae2391c41b014e7138" style="width: 100.0%; height: 100.0%;"><a href="https://www.hakubotan.co.jp/" target="_blank">白牡丹酒造</a></div>`)[0];
+                popup_39a789322955a19b86f2045a96d3d32d.setContent(html_1f5db0064271f7ae2391c41b014e7138);
+            
+        
+
+        marker_e4e6714e2ae670d7315e59ea34727657.bindPopup(popup_39a789322955a19b86f2045a96d3d32d)
+        ;
+
+        
+    
+    
+                marker_e4e6714e2ae670d7315e59ea34727657.setIcon(div_icon_30624eac3396e90a3da8620ac26acc43);
+            
+    
+            var marker_a0279f615fbb0422e2ebd28ab6db9b72 = L.marker(
+                [34.43023825577051, 132.74623048788482],
+                {
+}
+            ).addTo(feature_group_0f8dddb97c206c3db57bde28e4e4f2d0);
+        
+    
+            var div_icon_dbe6ee81e6991f7c31d354de4e1edff3 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n                width:8px;\n                height:8px;\n                background:#0066cc;\n                opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_6877af02a4c2631806f75a935618e15f = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_85bb15efb07625a59183de2d7d30b308 = $(`<div id="html_85bb15efb07625a59183de2d7d30b308" style="width: 100.0%; height: 100.0%;"><a href="https://saijotsuru.co.jp/" target="_blank">西條鶴醸造</a></div>`)[0];
+                popup_6877af02a4c2631806f75a935618e15f.setContent(html_85bb15efb07625a59183de2d7d30b308);
+            
+        
+
+        marker_a0279f615fbb0422e2ebd28ab6db9b72.bindPopup(popup_6877af02a4c2631806f75a935618e15f)
+        ;
+
+        
+    
+    
+                marker_a0279f615fbb0422e2ebd28ab6db9b72.setIcon(div_icon_dbe6ee81e6991f7c31d354de4e1edff3);
+            
+    
+            var marker_199c99a40a718b72dcfb0e8d5378cf7e = L.marker(
+                [34.42997071056299, 132.74632478590777],
+                {
+}
+            ).addTo(feature_group_0f8dddb97c206c3db57bde28e4e4f2d0);
+        
+    
+            var div_icon_e7f0987bf48acd403c2ff8f9dfe1e971 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n                width:8px;\n                height:8px;\n                background:#0066cc;\n                opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_96452858fb0771efb61e8079e917b08a = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_3ae434b7beee9d35f36b941043a3f9c5 = $(`<div id="html_3ae434b7beee9d35f36b941043a3f9c5" style="width: 100.0%; height: 100.0%;"><a href="https://kireikireikirei.jimdofree.com/" target="_blank">亀齢酒造</a></div>`)[0];
+                popup_96452858fb0771efb61e8079e917b08a.setContent(html_3ae434b7beee9d35f36b941043a3f9c5);
+            
+        
+
+        marker_199c99a40a718b72dcfb0e8d5378cf7e.bindPopup(popup_96452858fb0771efb61e8079e917b08a)
+        ;
+
+        
+    
+    
+                marker_199c99a40a718b72dcfb0e8d5378cf7e.setIcon(div_icon_e7f0987bf48acd403c2ff8f9dfe1e971);
+            
+    
+            var marker_5faf598c423a5935e46b03c6c0f4595e = L.marker(
+                [34.429531610247786, 132.7488761245397],
+                {
+}
+            ).addTo(feature_group_0f8dddb97c206c3db57bde28e4e4f2d0);
+        
+    
+            var div_icon_34c00edbf91677c176b6d257846785e7 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n                width:8px;\n                height:8px;\n                background:#0066cc;\n                opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_63896fdd8a00859d12f7d4f443161b1d = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_8cfbe7bfc64c7849bb76de1f6abd49ae = $(`<div id="html_8cfbe7bfc64c7849bb76de1f6abd49ae" style="width: 100.0%; height: 100.0%;"><a href="https://www.kamoizumi.co.jp/" target="_blank">賀茂泉酒造</a></div>`)[0];
+                popup_63896fdd8a00859d12f7d4f443161b1d.setContent(html_8cfbe7bfc64c7849bb76de1f6abd49ae);
+            
+        
+
+        marker_5faf598c423a5935e46b03c6c0f4595e.bindPopup(popup_63896fdd8a00859d12f7d4f443161b1d)
+        ;
+
+        
+    
+    
+                marker_5faf598c423a5935e46b03c6c0f4595e.setIcon(div_icon_34c00edbf91677c176b6d257846785e7);
+            
+    
+            var marker_dc0b4171ddf3371e83682c4a75fd4a1c = L.marker(
+                [34.43015921151904, 132.7407673282366],
+                {
+}
+            ).addTo(feature_group_0f8dddb97c206c3db57bde28e4e4f2d0);
+        
+    
+            var div_icon_d6fe8e06c8b15e7aa8e040677a3a8be4 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n                width:8px;\n                height:8px;\n                background:#0066cc;\n                opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_744c0a6c4110e5c6e3d1f76f290c2833 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_1401fed868436d913de5d944be83f01c = $(`<div id="html_1401fed868436d913de5d944be83f01c" style="width: 100.0%; height: 100.0%;"><a href="https://sanyotsuru.jp/" target="_blank">山陽鶴酒造</a></div>`)[0];
+                popup_744c0a6c4110e5c6e3d1f76f290c2833.setContent(html_1401fed868436d913de5d944be83f01c);
+            
+        
+
+        marker_dc0b4171ddf3371e83682c4a75fd4a1c.bindPopup(popup_744c0a6c4110e5c6e3d1f76f290c2833)
+        ;
+
+        
+    
+    
+                marker_dc0b4171ddf3371e83682c4a75fd4a1c.setIcon(div_icon_d6fe8e06c8b15e7aa8e040677a3a8be4);
+            
+    
+            var marker_5ae1c41f4f1276f1ab837aa91606de98 = L.marker(
+                [34.335531998510525, 132.69173755337283],
+                {
+}
+            ).addTo(feature_group_0f8dddb97c206c3db57bde28e4e4f2d0);
+        
+    
+            var div_icon_1d4a45ebd117a0643389947218afe35d = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n                width:8px;\n                height:8px;\n                background:#0066cc;\n                opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_443bd5d1fe3405693405dd82570ca4bd = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_7bf5a870c0c4a8b995f21c9f8edb807d = $(`<div id="html_7bf5a870c0c4a8b995f21c9f8edb807d" style="width: 100.0%; height: 100.0%;"><a href="https://www.kamokin.com/" target="_blank">金光酒造</a></div>`)[0];
+                popup_443bd5d1fe3405693405dd82570ca4bd.setContent(html_7bf5a870c0c4a8b995f21c9f8edb807d);
+            
+        
+
+        marker_5ae1c41f4f1276f1ab837aa91606de98.bindPopup(popup_443bd5d1fe3405693405dd82570ca4bd)
+        ;
+
+        
+    
+    
+                marker_5ae1c41f4f1276f1ab837aa91606de98.setIcon(div_icon_1d4a45ebd117a0643389947218afe35d);
+            
+    
+            var marker_5222e53537ea29f0c86a2139c6ce2658 = L.marker(
+                [34.28317672587351, 132.72937183197666],
+                {
+}
+            ).addTo(feature_group_0f8dddb97c206c3db57bde28e4e4f2d0);
+        
+    
+            var div_icon_1f21202a111a268108fc145b1e8de2ba = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n                width:8px;\n                height:8px;\n                background:#0066cc;\n                opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_89e97c426f3dd2df301458ffb523666a = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_3a4fc8a6c4b51f8b6e54a32aca00e5c0 = $(`<div id="html_3a4fc8a6c4b51f8b6e54a32aca00e5c0" style="width: 100.0%; height: 100.0%;"><a href="https://morikawa-shuzo.com/" target="_blank">盛川酒造</a></div>`)[0];
+                popup_89e97c426f3dd2df301458ffb523666a.setContent(html_3a4fc8a6c4b51f8b6e54a32aca00e5c0);
+            
+        
+
+        marker_5222e53537ea29f0c86a2139c6ce2658.bindPopup(popup_89e97c426f3dd2df301458ffb523666a)
+        ;
+
+        
+    
+    
+                marker_5222e53537ea29f0c86a2139c6ce2658.setIcon(div_icon_1f21202a111a268108fc145b1e8de2ba);
+            
+    
+            var marker_37a18f6bfa0d50320caf287597113d6d = L.marker(
+                [34.226120945255545, 132.65533216530378],
+                {
+}
+            ).addTo(feature_group_0f8dddb97c206c3db57bde28e4e4f2d0);
+        
+    
+            var div_icon_2fd6dfca6238f711ed5165fac3b86675 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n                width:8px;\n                height:8px;\n                background:#0066cc;\n                opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_d9343310222f12575365a5f945291502 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_a65a5a407ad0bf53b42d8c832330cb96 = $(`<div id="html_a65a5a407ad0bf53b42d8c832330cb96" style="width: 100.0%; height: 100.0%;"><a href="https://imadeya.co.jp/blogs/brewery/houken" target="_blank">宝剣酒造</a></div>`)[0];
+                popup_d9343310222f12575365a5f945291502.setContent(html_a65a5a407ad0bf53b42d8c832330cb96);
+            
+        
+
+        marker_37a18f6bfa0d50320caf287597113d6d.bindPopup(popup_d9343310222f12575365a5f945291502)
+        ;
+
+        
+    
+    
+                marker_37a18f6bfa0d50320caf287597113d6d.setIcon(div_icon_2fd6dfca6238f711ed5165fac3b86675);
+            
+    
+            var marker_546278d8cc4c9017a66b65e0ce65d2d8 = L.marker(
+                [34.22824992510996, 132.65078313904758],
+                {
+}
+            ).addTo(feature_group_0f8dddb97c206c3db57bde28e4e4f2d0);
+        
+    
+            var div_icon_0c098df6f950b687fda47331951c74f3 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n                width:8px;\n                height:8px;\n                background:#0066cc;\n                opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_f523ba3c6cfcbb2a37968d087e9f21a7 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_60a583d582a2a5d43558f4d6f3e9c8a8 = $(`<div id="html_60a583d582a2a5d43558f4d6f3e9c8a8" style="width: 100.0%; height: 100.0%;"><a href="https://www.ugonotsuki.com/" target="_blank">相原酒造</a></div>`)[0];
+                popup_f523ba3c6cfcbb2a37968d087e9f21a7.setContent(html_60a583d582a2a5d43558f4d6f3e9c8a8);
+            
+        
+
+        marker_546278d8cc4c9017a66b65e0ce65d2d8.bindPopup(popup_f523ba3c6cfcbb2a37968d087e9f21a7)
+        ;
+
+        
+    
+    
+                marker_546278d8cc4c9017a66b65e0ce65d2d8.setIcon(div_icon_0c098df6f950b687fda47331951c74f3);
+            
+    
+            var marker_b011481b1d5cb7547f49651fa7a7cc28 = L.marker(
+                [34.252229387177515, 132.57740022433634],
+                {
+}
+            ).addTo(feature_group_0f8dddb97c206c3db57bde28e4e4f2d0);
+        
+    
+            var div_icon_4678c06fb5537a5cd6088dc81b760ef2 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n                width:8px;\n                height:8px;\n                background:#0066cc;\n                opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_785f7d8b8160e66ac886c3ce09d24497 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_a966ce60975562dd5040e496fdfd14e8 = $(`<div id="html_a966ce60975562dd5040e496fdfd14e8" style="width: 100.0%; height: 100.0%;"><a href="https://sempuku.co.jp/" target="_blank">千福・三宅本店</a></div>`)[0];
+                popup_785f7d8b8160e66ac886c3ce09d24497.setContent(html_a966ce60975562dd5040e496fdfd14e8);
+            
+        
+
+        marker_b011481b1d5cb7547f49651fa7a7cc28.bindPopup(popup_785f7d8b8160e66ac886c3ce09d24497)
+        ;
+
+        
+    
+    
+                marker_b011481b1d5cb7547f49651fa7a7cc28.setIcon(div_icon_4678c06fb5537a5cd6088dc81b760ef2);
+            
+    
+            var marker_18b61425cf3f7bdd128010794652c9b1 = L.marker(
+                [34.19774715244936, 132.5328791871293],
+                {
+}
+            ).addTo(feature_group_0f8dddb97c206c3db57bde28e4e4f2d0);
+        
+    
+            var div_icon_5e5dd31c5d6b481549f5e2e8f50cc349 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n                width:8px;\n                height:8px;\n                background:#0066cc;\n                opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_32552fcdcd380b808deb5d60ab72fada = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_73c3ab725906e5dc1a3fe062ef9d85fd = $(`<div id="html_73c3ab725906e5dc1a3fe062ef9d85fd" style="width: 100.0%; height: 100.0%;"><a href="https://hanahato.ocnk.net/" target="_blank">榎酒造</a></div>`)[0];
+                popup_32552fcdcd380b808deb5d60ab72fada.setContent(html_73c3ab725906e5dc1a3fe062ef9d85fd);
+            
+        
+
+        marker_18b61425cf3f7bdd128010794652c9b1.bindPopup(popup_32552fcdcd380b808deb5d60ab72fada)
+        ;
+
+        
+    
+    
+                marker_18b61425cf3f7bdd128010794652c9b1.setIcon(div_icon_5e5dd31c5d6b481549f5e2e8f50cc349);
+            
+    
+            var marker_5b9522f091ae07eda381524bf0ec6d3b = L.marker(
+                [34.111847484333914, 132.54368534438856],
+                {
+}
+            ).addTo(feature_group_0f8dddb97c206c3db57bde28e4e4f2d0);
+        
+    
+            var div_icon_d40a740984da27be252d684db579827e = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n                width:8px;\n                height:8px;\n                background:#0066cc;\n                opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_d35a94adf2497be524237bd36f2dc4c5 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_93360d59cc967cd25f480b1015038e01 = $(`<div id="html_93360d59cc967cd25f480b1015038e01" style="width: 100.0%; height: 100.0%;"><a href="https://hayashi-shuzo.com/" target="_blank">林酒造</a></div>`)[0];
+                popup_d35a94adf2497be524237bd36f2dc4c5.setContent(html_93360d59cc967cd25f480b1015038e01);
+            
+        
+
+        marker_5b9522f091ae07eda381524bf0ec6d3b.bindPopup(popup_d35a94adf2497be524237bd36f2dc4c5)
+        ;
+
+        
+    
+    
+                marker_5b9522f091ae07eda381524bf0ec6d3b.setIcon(div_icon_d40a740984da27be252d684db579827e);
+            
+    
+            var marker_f837b04d60bf5d93d1ad134524cdb036 = L.marker(
+                [34.237520154272524, 132.91773649754836],
+                {
+}
+            ).addTo(feature_group_0f8dddb97c206c3db57bde28e4e4f2d0);
+        
+    
+            var div_icon_a27469118f08c34402ba894d9702aba3 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n                width:8px;\n                height:8px;\n                background:#0066cc;\n                opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_cf34db64d12ca893e60a04d801666cb4 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_4f8d3d0f89e44f2e5a296dce20c7d1f5 = $(`<div id="html_4f8d3d0f89e44f2e5a296dce20c7d1f5" style="width: 100.0%; height: 100.0%;"><a href="https://michishio.base.ec/" target="_blank">MICHISHIO BREWING</a></div>`)[0];
+                popup_cf34db64d12ca893e60a04d801666cb4.setContent(html_4f8d3d0f89e44f2e5a296dce20c7d1f5);
+            
+        
+
+        marker_f837b04d60bf5d93d1ad134524cdb036.bindPopup(popup_cf34db64d12ca893e60a04d801666cb4)
+        ;
+
+        
+    
+    
+                marker_f837b04d60bf5d93d1ad134524cdb036.setIcon(div_icon_a27469118f08c34402ba894d9702aba3);
+            
+    
+            var marker_955d7dd9ece77e4e2b7298107a55758d = L.marker(
+                [34.19143258624638, 132.8192631996505],
+                {
+}
+            ).addTo(feature_group_0f8dddb97c206c3db57bde28e4e4f2d0);
+        
+    
+            var div_icon_6ea822d69c094872b9e93ccacce42fb8 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n                width:8px;\n                height:8px;\n                background:#0066cc;\n                opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_4092456868557335b882ca431d407293 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_7e1f7c32245034df4dca19740b889073 = $(`<div id="html_7e1f7c32245034df4dca19740b889073" style="width: 100.0%; height: 100.0%;"><a href="https://naorai.co/" target="_blank">ナオライ</a></div>`)[0];
+                popup_4092456868557335b882ca431d407293.setContent(html_7e1f7c32245034df4dca19740b889073);
+            
+        
+
+        marker_955d7dd9ece77e4e2b7298107a55758d.bindPopup(popup_4092456868557335b882ca431d407293)
+        ;
+
+        
+    
+    
+                marker_955d7dd9ece77e4e2b7298107a55758d.setIcon(div_icon_6ea822d69c094872b9e93ccacce42fb8);
+            
+    
+            var marker_a562a7b7e5acb2ae5f7274c7cf795046 = L.marker(
+                [34.24832153810757, 133.00040659754848],
+                {
+}
+            ).addTo(feature_group_0f8dddb97c206c3db57bde28e4e4f2d0);
+        
+    
+            var div_icon_a2782e0d90fc314259d0efd846420ca3 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n                width:8px;\n                height:8px;\n                background:#0066cc;\n                opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_44daa05e8813f74e96f90d59f8e933c7 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_b3b0d1cffe569cb0ff845c3bc2e3a439 = $(`<div id="html_b3b0d1cffe569cb0ff845c3bc2e3a439" style="width: 100.0%; height: 100.0%;"><a href="http://www.ohmishimawine.com/" target="_blank">大三島みんなのワイナリー</a></div>`)[0];
+                popup_44daa05e8813f74e96f90d59f8e933c7.setContent(html_b3b0d1cffe569cb0ff845c3bc2e3a439);
+            
+        
+
+        marker_a562a7b7e5acb2ae5f7274c7cf795046.bindPopup(popup_44daa05e8813f74e96f90d59f8e933c7)
+        ;
+
+        
+    
+    
+                marker_a562a7b7e5acb2ae5f7274c7cf795046.setIcon(div_icon_a2782e0d90fc314259d0efd846420ca3);
+            
+    
+            feature_group_0f8dddb97c206c3db57bde28e4e4f2d0.addTo(map_7267f6a5c0d852471b1e71ed4983f1b9);
+        
+    
+            var feature_group_1baf587f215a4789a6d2f7863d323b53 = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var marker_9c52d6f05d9db9941c0e3abd9b9104c1 = L.marker(
+                [34.43419950338322, 132.74875053057923],
+                {
+}
+            ).addTo(feature_group_1baf587f215a4789a6d2f7863d323b53);
+        
+    
+            var div_icon_c63d9a31b5e3b963a4df012ebd961db8 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n                width:8px;\n                height:8px;\n                background:#1a7f37;\n                opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_bd3614ec502a4f7b91e5797d5daa4fe3 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_fe2dad0f5432560be6ef984ab4422b46 = $(`<div id="html_fe2dad0f5432560be6ef984ab4422b46" style="width: 100.0%; height: 100.0%;"><a href="http://www.ohmishimawine.com/" target="_blank">安芸国分寺</a></div>`)[0];
+                popup_bd3614ec502a4f7b91e5797d5daa4fe3.setContent(html_fe2dad0f5432560be6ef984ab4422b46);
+            
+        
+
+        marker_9c52d6f05d9db9941c0e3abd9b9104c1.bindPopup(popup_bd3614ec502a4f7b91e5797d5daa4fe3)
+        ;
+
+        
+    
+    
+                marker_9c52d6f05d9db9941c0e3abd9b9104c1.setIcon(div_icon_c63d9a31b5e3b963a4df012ebd961db8);
+            
+    
+            var marker_63f0a670f5d713dc91f8b05c4fb0f86d = L.marker(
+                [34.43311257243008, 132.74422920707238],
+                {
+}
+            ).addTo(feature_group_1baf587f215a4789a6d2f7863d323b53);
+        
+    
+            var div_icon_a2504cf0f2c69fbe1ac1cf460e429dfe = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n                width:8px;\n                height:8px;\n                background:#1a7f37;\n                opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_033403f430444b9236faf406fdeec59d = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_0ee9cc30023da659c6aaaa8bd1400f40 = $(`<div id="html_0ee9cc30023da659c6aaaa8bd1400f40" style="width: 100.0%; height: 100.0%;"><a href="http://www.ohmishimawine.com/" target="_blank">御建神社</a></div>`)[0];
+                popup_033403f430444b9236faf406fdeec59d.setContent(html_0ee9cc30023da659c6aaaa8bd1400f40);
+            
+        
+
+        marker_63f0a670f5d713dc91f8b05c4fb0f86d.bindPopup(popup_033403f430444b9236faf406fdeec59d)
+        ;
+
+        
+    
+    
+                marker_63f0a670f5d713dc91f8b05c4fb0f86d.setIcon(div_icon_a2504cf0f2c69fbe1ac1cf460e429dfe);
+            
+    
+            var marker_5a46f8924de350cceb2732532cfc82e6 = L.marker(
+                [34.462340947420024, 132.87621398704022],
+                {
+}
+            ).addTo(feature_group_1baf587f215a4789a6d2f7863d323b53);
+        
+    
+            var div_icon_cecd654b6d1706361bf72ab30e420186 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n                width:8px;\n                height:8px;\n                background:#1a7f37;\n                opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_c975eb0e0594d5e2668d7cfc6d850c33 = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_652e1c4edb25f8006054248aeeec0618 = $(`<div id="html_652e1c4edb25f8006054248aeeec0618" style="width: 100.0%; height: 100.0%;"><a href="http://www.ohmishimawine.com/" target="_blank">竹林寺</a></div>`)[0];
+                popup_c975eb0e0594d5e2668d7cfc6d850c33.setContent(html_652e1c4edb25f8006054248aeeec0618);
+            
+        
+
+        marker_5a46f8924de350cceb2732532cfc82e6.bindPopup(popup_c975eb0e0594d5e2668d7cfc6d850c33)
+        ;
+
+        
+    
+    
+                marker_5a46f8924de350cceb2732532cfc82e6.setIcon(div_icon_cecd654b6d1706361bf72ab30e420186);
+            
+    
+            var marker_07629270e87d775ac330227881211d51 = L.marker(
+                [34.31824623391472, 132.81147931289618],
+                {
+}
+            ).addTo(feature_group_1baf587f215a4789a6d2f7863d323b53);
+        
+    
+            var div_icon_cd1866cf247d71c8b055d89a769daef7 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n                width:8px;\n                height:8px;\n                background:#1a7f37;\n                opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_e7b29857b7928e48f10b36eff632160e = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_05cca65e157ec86f20274f047cfd55d1 = $(`<div id="html_05cca65e157ec86f20274f047cfd55d1" style="width: 100.0%; height: 100.0%;"><a href="http://www.ohmishimawine.com/" target="_blank">榊山八幡神社</a></div>`)[0];
+                popup_e7b29857b7928e48f10b36eff632160e.setContent(html_05cca65e157ec86f20274f047cfd55d1);
+            
+        
+
+        marker_07629270e87d775ac330227881211d51.bindPopup(popup_e7b29857b7928e48f10b36eff632160e)
+        ;
+
+        
+    
+    
+                marker_07629270e87d775ac330227881211d51.setIcon(div_icon_cd1866cf247d71c8b055d89a769daef7);
+            
+    
+            var marker_e35109202f0265d16d1580a6fa94f1ac = L.marker(
+                [34.31601541670344, 132.79575521973842],
+                {
+}
+            ).addTo(feature_group_1baf587f215a4789a6d2f7863d323b53);
+        
+    
+            var div_icon_7517de205970f5cbef3c6f7987aaa0fd = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n                width:8px;\n                height:8px;\n                background:#1a7f37;\n                opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_c942e440aa2127dbd7ac55996243f5ac = L.popup({
+  "maxWidth": 220,
+});
+
+        
+            
+                var html_643d0d897d6212a978768037c500de78 = $(`<div id="html_643d0d897d6212a978768037c500de78" style="width: 100.0%; height: 100.0%;"><a href="http://www.ohmishimawine.com/" target="_blank">祝詞山八幡神社</a></div>`)[0];
+                popup_c942e440aa2127dbd7ac55996243f5ac.setContent(html_643d0d897d6212a978768037c500de78);
+            
+        
+
+        marker_e35109202f0265d16d1580a6fa94f1ac.bindPopup(popup_c942e440aa2127dbd7ac55996243f5ac)
+        ;
+
+        
+    
+    
+                marker_e35109202f0265d16d1580a6fa94f1ac.setIcon(div_icon_7517de205970f5cbef3c6f7987aaa0fd);
+            
+</script>
+</html>
