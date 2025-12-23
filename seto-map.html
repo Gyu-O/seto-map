@@ -17,7 +17,7 @@
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_ffc24eced89555f62d0224f1c7533e13 {
+                #map_53dc65b621e099d0657b6f23d54d4a28 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -54,7 +54,7 @@
 <body>
     
     
-            <div class="folium-map" id="map_ffc24eced89555f62d0224f1c7533e13" ></div>
+            <div class="folium-map" id="map_53dc65b621e099d0657b6f23d54d4a28" ></div>
         
     
 <style>
@@ -69,7 +69,7 @@
     padding: 10px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.12);
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", sans-serif;
-    min-width: 140px;
+    min-width: 150px;
   }
   .toggle-title {
     font-size: 12px;
@@ -87,7 +87,6 @@
   }
   .toggle-item:hover { background: rgba(0,0,0,0.04); }
 
-  /* OFF時はグレー */
   .sq {
     width: 10px;
     height: 10px;
@@ -101,34 +100,49 @@
     letter-spacing: 0.02em;
   }
 
-  /* ONの色（レイヤーONのときだけ色がつく） */
+  .on-otafuku .sq { background: rgba(196,0,0,0.5); }
   .on-sake .sq { background: rgba(0,102,204,0.5); }
   .on-jinja .sq { background: rgba(26,127,55,0.5); }
+  .on-arch .sq { background: rgba(242,195,0,0.5); }
+  .on-islands .sq { background: rgba(58,58,58,0.55); }
+
+  .toggle-static { cursor: default; }
+  .toggle-static:hover { background: transparent; }
 </style>
 
 <div class="toggle-box" id="customToggle">
   <div class="toggle-title">Layers</div>
+
+  <div class="toggle-item toggle-static on-otafuku" id="btn-otafuku">
+    <span class="sq"></span><span class="label">柄酒造</span>
+  </div>
+
   <div class="toggle-item" id="btn-sake"><span class="sq"></span><span class="label">酒蔵</span></div>
   <div class="toggle-item" id="btn-jinja"><span class="sq"></span><span class="label">寺社</span></div>
+  <div class="toggle-item" id="btn-arch"><span class="sq"></span><span class="label">建築</span></div>
+  <div class="toggle-item" id="btn-islands"><span class="sq"></span><span class="label">島</span></div>
 </div>
 
 <script>
 (function() {
   function initWhenReady() {
-    var map = map_ffc24eced89555f62d0224f1c7533e13;
-    var layerSake = feature_group_5b35101d73aab914cfcc7eee8301400f;
-    var layerJinja = feature_group_ca2b0991314f9c3ae0c70e6bed236ac9;
+    var map = map_53dc65b621e099d0657b6f23d54d4a28;
+    var layerSake = feature_group_a5575cf15efa26583e9f9f19651bd8c1;
+    var layerJinja = feature_group_0c0c23429eaa1562d4586fa25bfecac4;
+    var layerArch = feature_group_bbb8d627ced9c59f07fe3eca5934d93f;
+    var layerIslands = feature_group_05d2cb96d1a1b4526e373e873eee7721;
 
     var btnSake = document.getElementById("btn-sake");
     var btnJinja = document.getElementById("btn-jinja");
+    var btnArch = document.getElementById("btn-arch");
+    var btnIslands = document.getElementById("btn-islands");
     var box = document.getElementById("customToggle");
 
-    if (!btnSake || !btnJinja || !box || typeof map === "undefined") {
+    if (!btnSake || !btnJinja || !btnArch || !btnIslands || !box || typeof map === "undefined") {
       setTimeout(initWhenReady, 50);
       return;
     }
 
-    // ボタン押下が地図のドラッグ/ズームと競合しないようにする
     if (window.L && L.DomEvent) {
       L.DomEvent.disableClickPropagation(box);
       L.DomEvent.disableScrollPropagation(box);
@@ -139,11 +153,11 @@
       else btn.classList.remove(cls);
     }
 
-    // 初期状態を反映
     setBtn(btnSake, map.hasLayer(layerSake), "on-sake");
     setBtn(btnJinja, map.hasLayer(layerJinja), "on-jinja");
+    setBtn(btnArch, map.hasLayer(layerArch), "on-arch");
+    setBtn(btnIslands, map.hasLayer(layerIslands), "on-islands");
 
-    // クリックでトグル
     btnSake.addEventListener("click", function() {
       if (map.hasLayer(layerSake)) {
         map.removeLayer(layerSake);
@@ -163,6 +177,26 @@
         setBtn(btnJinja, true, "on-jinja");
       }
     });
+
+    btnArch.addEventListener("click", function() {
+      if (map.hasLayer(layerArch)) {
+        map.removeLayer(layerArch);
+        setBtn(btnArch, false, "on-arch");
+      } else {
+        map.addLayer(layerArch);
+        setBtn(btnArch, true, "on-arch");
+      }
+    });
+
+    btnIslands.addEventListener("click", function() {
+      if (map.hasLayer(layerIslands)) {
+        map.removeLayer(layerIslands);
+        setBtn(btnIslands, false, "on-islands");
+      } else {
+        map.addLayer(layerIslands);
+        setBtn(btnIslands, true, "on-islands");
+      }
+    });
   }
 
   if (document.readyState === "loading") {
@@ -176,8 +210,8 @@
 <script>
     
     
-            var map_ffc24eced89555f62d0224f1c7533e13 = L.map(
-                "map_ffc24eced89555f62d0224f1c7533e13",
+            var map_53dc65b621e099d0657b6f23d54d4a28 = L.map(
+                "map_53dc65b621e099d0657b6f23d54d4a28",
                 {
                     center: [34.295, 132.81],
                     crs: L.CRS.EPSG3857,
@@ -194,7 +228,7 @@
 
         
     
-            var tile_layer_da3f9b7a5298b0f9a39efa35e02ec5f2 = L.tileLayer(
+            var tile_layer_60c7123bc713482b194404259cdc0b58 = L.tileLayer(
                 "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
                 {
   "minZoom": 0,
@@ -211,60 +245,24 @@
             );
         
     
-            tile_layer_da3f9b7a5298b0f9a39efa35e02ec5f2.addTo(map_ffc24eced89555f62d0224f1c7533e13);
+            tile_layer_60c7123bc713482b194404259cdc0b58.addTo(map_53dc65b621e099d0657b6f23d54d4a28);
         
     
-            var feature_group_5b35101d73aab914cfcc7eee8301400f = L.featureGroup(
+            var feature_group_a5575cf15efa26583e9f9f19651bd8c1 = L.featureGroup(
                 {
 }
             );
         
     
-            var marker_b756962624cb24c823289b3b9670866a = L.marker(
-                [34.31903341455433, 132.8165584534892],
-                {
-}
-            ).addTo(feature_group_5b35101d73aab914cfcc7eee8301400f);
-        
-    
-            var div_icon_662929bb0fc329ca9ccee8e1f2149aad = L.divIcon({
-  "html": "\n            \u003cdiv style=\"transform: translate(-50%, -50%);\"\u003e\n              \u003cdiv style=\"\n                  width:8px;\n                  height:8px;\n                  background:#c40000;\n                  opacity:0.4;\n              \"\u003e\u003c/div\u003e\n            \u003c/div\u003e\n            ",
-  "iconSize": [8, 8],
-  "iconAnchor": [4, 4],
-  "popupAnchor": [0, -4],
-  "className": "empty",
-});
-        
-    
-        var popup_b1574ce4805d115629f0e0306324591f = L.popup({
-  "maxWidth": 240,
-});
-
-        
-            
-                var html_be316b5beff1bb4e10c9737f835bc649 = $(`<div id="html_be316b5beff1bb4e10c9737f835bc649" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://www.tsukasyuzou.jp/" target="_blank" rel="noopener noreferrer">柄酒造</a>       </div>              <div>           <a href="https://www.instagram.com/otafuku.sake/" target="_blank" rel="noopener noreferrer"              style="display:inline-block; text-decoration:none;">              <svg width="18" height="18" viewBox="0 0 24 24">   <path fill="rgba(0,0,0,0.65)" d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm10 2H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3zm-5 4.5A5.5 5.5 0 1 1 6.5 14 5.5 5.5 0 0 1 12 8.5zm0 2A3.5 3.5 0 1 0 15.5 14 3.5 3.5 0 0 0 12 10.5zM18 6.8a1.2 1.2 0 1 1-1.2 1.2A1.2 1.2 0 0 1 18 6.8z"/> </svg>            </a>         </div>         </div></div>`)[0];
-                popup_b1574ce4805d115629f0e0306324591f.setContent(html_be316b5beff1bb4e10c9737f835bc649);
-            
-        
-
-        marker_b756962624cb24c823289b3b9670866a.bindPopup(popup_b1574ce4805d115629f0e0306324591f)
-        ;
-
-        
-    
-    
-                marker_b756962624cb24c823289b3b9670866a.setIcon(div_icon_662929bb0fc329ca9ccee8e1f2149aad);
-            
-    
-            var marker_37fad808ab81dbe919f2c1a667928f17 = L.marker(
+            var marker_de5bec85faee37a3e7d76dade3480dac = L.marker(
                 [34.319820014547, 132.81978976386438],
                 {
 }
-            ).addTo(feature_group_5b35101d73aab914cfcc7eee8301400f);
+            ).addTo(feature_group_a5575cf15efa26583e9f9f19651bd8c1);
         
     
-            var div_icon_412d1fa3a8130719f07c822dfa6b1800 = L.divIcon({
-  "html": "\n            \u003cdiv style=\"transform: translate(-50%, -50%);\"\u003e\n              \u003cdiv style=\"\n                  width:8px;\n                  height:8px;\n                  background:#0066cc;\n                  opacity:0.4;\n              \"\u003e\u003c/div\u003e\n            \u003c/div\u003e\n            ",
+            var div_icon_466187c810a1d2f492e2394bff366f04 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#0066cc;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
   "iconSize": [8, 8],
   "iconAnchor": [4, 4],
   "popupAnchor": [0, -4],
@@ -272,35 +270,35 @@
 });
         
     
-        var popup_42c551aabc535726aa3031d574a62b04 = L.popup({
-  "maxWidth": 240,
+        var popup_ee0db46431ebfa6df232d86aa92f0989 = L.popup({
+  "maxWidth": 260,
 });
 
         
             
-                var html_b5a629554bf8610e0b6deb04b879bd08 = $(`<div id="html_b5a629554bf8610e0b6deb04b879bd08" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://fukucho.jp/" target="_blank" rel="noopener noreferrer">今田酒造</a>       </div>     </div></div>`)[0];
-                popup_42c551aabc535726aa3031d574a62b04.setContent(html_b5a629554bf8610e0b6deb04b879bd08);
+                var html_08acc48d023c15f2f4aab6025281026b = $(`<div id="html_08acc48d023c15f2f4aab6025281026b" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://fukucho.jp/" target="_blank" rel="noopener noreferrer">今田酒造</a>       </div>     </div></div>`)[0];
+                popup_ee0db46431ebfa6df232d86aa92f0989.setContent(html_08acc48d023c15f2f4aab6025281026b);
             
         
 
-        marker_37fad808ab81dbe919f2c1a667928f17.bindPopup(popup_42c551aabc535726aa3031d574a62b04)
+        marker_de5bec85faee37a3e7d76dade3480dac.bindPopup(popup_ee0db46431ebfa6df232d86aa92f0989)
         ;
 
         
     
     
-                marker_37fad808ab81dbe919f2c1a667928f17.setIcon(div_icon_412d1fa3a8130719f07c822dfa6b1800);
+                marker_de5bec85faee37a3e7d76dade3480dac.setIcon(div_icon_466187c810a1d2f492e2394bff366f04);
             
     
-            var marker_25bf9ab351c1c7a7d77a24f7b202e526 = L.marker(
+            var marker_7f5753e01fe645186b3d47af7cc3beaa = L.marker(
                 [34.340883148374154, 132.90370870919548],
                 {
 }
-            ).addTo(feature_group_5b35101d73aab914cfcc7eee8301400f);
+            ).addTo(feature_group_a5575cf15efa26583e9f9f19651bd8c1);
         
     
-            var div_icon_8d25c3d6f436c87da6f3c78b7c78de00 = L.divIcon({
-  "html": "\n            \u003cdiv style=\"transform: translate(-50%, -50%);\"\u003e\n              \u003cdiv style=\"\n                  width:8px;\n                  height:8px;\n                  background:#0066cc;\n                  opacity:0.4;\n              \"\u003e\u003c/div\u003e\n            \u003c/div\u003e\n            ",
+            var div_icon_5992058d111e0484d020ab3599bec565 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#0066cc;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
   "iconSize": [8, 8],
   "iconAnchor": [4, 4],
   "popupAnchor": [0, -4],
@@ -308,35 +306,35 @@
 });
         
     
-        var popup_8b6dcc1c9131524ede1a98354768c7ef = L.popup({
-  "maxWidth": 240,
+        var popup_4b29f6c9edd988102b57aa53477a0993 = L.popup({
+  "maxWidth": 260,
 });
 
         
             
-                var html_b5e952b0e26021fc68d2447ac75ae25f = $(`<div id="html_b5e952b0e26021fc68d2447ac75ae25f" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="http://www.maboroshi.co.jp/company/" target="_blank" rel="noopener noreferrer">中尾醸造</a>       </div>     </div></div>`)[0];
-                popup_8b6dcc1c9131524ede1a98354768c7ef.setContent(html_b5e952b0e26021fc68d2447ac75ae25f);
+                var html_87ea852c73593134e4fbf6caa6cc2e4a = $(`<div id="html_87ea852c73593134e4fbf6caa6cc2e4a" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="http://www.maboroshi.co.jp/company/" target="_blank" rel="noopener noreferrer">中尾醸造</a>       </div>     </div></div>`)[0];
+                popup_4b29f6c9edd988102b57aa53477a0993.setContent(html_87ea852c73593134e4fbf6caa6cc2e4a);
             
         
 
-        marker_25bf9ab351c1c7a7d77a24f7b202e526.bindPopup(popup_8b6dcc1c9131524ede1a98354768c7ef)
+        marker_7f5753e01fe645186b3d47af7cc3beaa.bindPopup(popup_4b29f6c9edd988102b57aa53477a0993)
         ;
 
         
     
     
-                marker_25bf9ab351c1c7a7d77a24f7b202e526.setIcon(div_icon_8d25c3d6f436c87da6f3c78b7c78de00);
+                marker_7f5753e01fe645186b3d47af7cc3beaa.setIcon(div_icon_5992058d111e0484d020ab3599bec565);
             
     
-            var marker_140d46ef48831d07f58744e1a34a4334 = L.marker(
+            var marker_e30d5024111e9c5731e15f12a5dd2f40 = L.marker(
                 [34.34607639696198, 132.91133263803098],
                 {
 }
-            ).addTo(feature_group_5b35101d73aab914cfcc7eee8301400f);
+            ).addTo(feature_group_a5575cf15efa26583e9f9f19651bd8c1);
         
     
-            var div_icon_0318a6580545bf4d3e7b0ef69fcd2af4 = L.divIcon({
-  "html": "\n            \u003cdiv style=\"transform: translate(-50%, -50%);\"\u003e\n              \u003cdiv style=\"\n                  width:8px;\n                  height:8px;\n                  background:#0066cc;\n                  opacity:0.4;\n              \"\u003e\u003c/div\u003e\n            \u003c/div\u003e\n            ",
+            var div_icon_bd35b5eaa7425c5e7171c7aa3b4a3858 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#0066cc;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
   "iconSize": [8, 8],
   "iconAnchor": [4, 4],
   "popupAnchor": [0, -4],
@@ -344,35 +342,35 @@
 });
         
     
-        var popup_c614a23ac2ff5abe170a5b8db28281d0 = L.popup({
-  "maxWidth": 240,
+        var popup_d23972a1391416f81fd16c00bae5ecdd = L.popup({
+  "maxWidth": 260,
 });
 
         
             
-                var html_92eab516aa8b2d4b9355ff9eb726e161 = $(`<div id="html_92eab516aa8b2d4b9355ff9eb726e161" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://www.taketsuru-shuzou.co.jp/" target="_blank" rel="noopener noreferrer">竹鶴酒造</a>       </div>     </div></div>`)[0];
-                popup_c614a23ac2ff5abe170a5b8db28281d0.setContent(html_92eab516aa8b2d4b9355ff9eb726e161);
+                var html_876e5cd212ec3612c2a08f3aa8cdd9a4 = $(`<div id="html_876e5cd212ec3612c2a08f3aa8cdd9a4" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://www.taketsuru-shuzou.co.jp/" target="_blank" rel="noopener noreferrer">竹鶴酒造</a>       </div>     </div></div>`)[0];
+                popup_d23972a1391416f81fd16c00bae5ecdd.setContent(html_876e5cd212ec3612c2a08f3aa8cdd9a4);
             
         
 
-        marker_140d46ef48831d07f58744e1a34a4334.bindPopup(popup_c614a23ac2ff5abe170a5b8db28281d0)
+        marker_e30d5024111e9c5731e15f12a5dd2f40.bindPopup(popup_d23972a1391416f81fd16c00bae5ecdd)
         ;
 
         
     
     
-                marker_140d46ef48831d07f58744e1a34a4334.setIcon(div_icon_0318a6580545bf4d3e7b0ef69fcd2af4);
+                marker_e30d5024111e9c5731e15f12a5dd2f40.setIcon(div_icon_bd35b5eaa7425c5e7171c7aa3b4a3858);
             
     
-            var marker_8a87c5b3d0b94e06ba4d6d5172a8c6d3 = L.marker(
+            var marker_ed3cd0b32ca2eaa4d86a4e9ee8594243 = L.marker(
                 [34.34713475686066, 132.9087803533732],
                 {
 }
-            ).addTo(feature_group_5b35101d73aab914cfcc7eee8301400f);
+            ).addTo(feature_group_a5575cf15efa26583e9f9f19651bd8c1);
         
     
-            var div_icon_1131be35c18fd5aceaac7c322c2fd23a = L.divIcon({
-  "html": "\n            \u003cdiv style=\"transform: translate(-50%, -50%);\"\u003e\n              \u003cdiv style=\"\n                  width:8px;\n                  height:8px;\n                  background:#0066cc;\n                  opacity:0.4;\n              \"\u003e\u003c/div\u003e\n            \u003c/div\u003e\n            ",
+            var div_icon_1554d8579d25196a466ff1198fef80f0 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#0066cc;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
   "iconSize": [8, 8],
   "iconAnchor": [4, 4],
   "popupAnchor": [0, -4],
@@ -380,35 +378,35 @@
 });
         
     
-        var popup_8dfe00c3d89c345a0a29661c7f77a9cb = L.popup({
-  "maxWidth": 240,
+        var popup_e2f7ce7a984823e102ccd534ff6a47f3 = L.popup({
+  "maxWidth": 260,
 });
 
         
             
-                var html_29796e1a5a8c9c68be4253d019545f35 = $(`<div id="html_29796e1a5a8c9c68be4253d019545f35" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://www.fujiishuzou.com/" target="_blank" rel="noopener noreferrer">藤井酒造</a>       </div>     </div></div>`)[0];
-                popup_8dfe00c3d89c345a0a29661c7f77a9cb.setContent(html_29796e1a5a8c9c68be4253d019545f35);
+                var html_14d07e1eeaf6405762ff65bf9ee256f8 = $(`<div id="html_14d07e1eeaf6405762ff65bf9ee256f8" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://www.fujiishuzou.com/" target="_blank" rel="noopener noreferrer">藤井酒造</a>       </div>     </div></div>`)[0];
+                popup_e2f7ce7a984823e102ccd534ff6a47f3.setContent(html_14d07e1eeaf6405762ff65bf9ee256f8);
             
         
 
-        marker_8a87c5b3d0b94e06ba4d6d5172a8c6d3.bindPopup(popup_8dfe00c3d89c345a0a29661c7f77a9cb)
+        marker_ed3cd0b32ca2eaa4d86a4e9ee8594243.bindPopup(popup_e2f7ce7a984823e102ccd534ff6a47f3)
         ;
 
         
     
     
-                marker_8a87c5b3d0b94e06ba4d6d5172a8c6d3.setIcon(div_icon_1131be35c18fd5aceaac7c322c2fd23a);
+                marker_ed3cd0b32ca2eaa4d86a4e9ee8594243.setIcon(div_icon_1554d8579d25196a466ff1198fef80f0);
             
     
-            var marker_bd2e28051baab1e5a0e3bbd602845841 = L.marker(
+            var marker_fbf1c30d5bca5be850c007238ee59cb1 = L.marker(
                 [34.356573371792784, 133.08298394422584],
                 {
 }
-            ).addTo(feature_group_5b35101d73aab914cfcc7eee8301400f);
+            ).addTo(feature_group_a5575cf15efa26583e9f9f19651bd8c1);
         
     
-            var div_icon_09e42fcc0e83440cb1421cc0cac54d0d = L.divIcon({
-  "html": "\n            \u003cdiv style=\"transform: translate(-50%, -50%);\"\u003e\n              \u003cdiv style=\"\n                  width:8px;\n                  height:8px;\n                  background:#0066cc;\n                  opacity:0.4;\n              \"\u003e\u003c/div\u003e\n            \u003c/div\u003e\n            ",
+            var div_icon_6a4b4fdc40c1f04a40980eab4d8a9600 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#0066cc;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
   "iconSize": [8, 8],
   "iconAnchor": [4, 4],
   "popupAnchor": [0, -4],
@@ -416,35 +414,35 @@
 });
         
     
-        var popup_604e371b58628a11e9d5c25c0a643104 = L.popup({
-  "maxWidth": 240,
+        var popup_8a8e3a56dffc06bb645108c434178832 = L.popup({
+  "maxWidth": 260,
 });
 
         
             
-                var html_38538d6dcf581132eef53185eb5ef274 = $(`<div id="html_38538d6dcf581132eef53185eb5ef274" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://shop.setouchijozojo.jp/" target="_blank" rel="noopener noreferrer">瀬戸内醸造所</a>       </div>     </div></div>`)[0];
-                popup_604e371b58628a11e9d5c25c0a643104.setContent(html_38538d6dcf581132eef53185eb5ef274);
+                var html_e55bfdfc50c4a07763e9560ad9c5385b = $(`<div id="html_e55bfdfc50c4a07763e9560ad9c5385b" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://shop.setouchijozojo.jp/" target="_blank" rel="noopener noreferrer">瀬戸内醸造所</a>       </div>     </div></div>`)[0];
+                popup_8a8e3a56dffc06bb645108c434178832.setContent(html_e55bfdfc50c4a07763e9560ad9c5385b);
             
         
 
-        marker_bd2e28051baab1e5a0e3bbd602845841.bindPopup(popup_604e371b58628a11e9d5c25c0a643104)
+        marker_fbf1c30d5bca5be850c007238ee59cb1.bindPopup(popup_8a8e3a56dffc06bb645108c434178832)
         ;
 
         
     
     
-                marker_bd2e28051baab1e5a0e3bbd602845841.setIcon(div_icon_09e42fcc0e83440cb1421cc0cac54d0d);
+                marker_fbf1c30d5bca5be850c007238ee59cb1.setIcon(div_icon_6a4b4fdc40c1f04a40980eab4d8a9600);
             
     
-            var marker_84c04ff7a0d587cc3fe832c6425a78a2 = L.marker(
+            var marker_32a4849e2f4e1302960c8a6429f99e6f = L.marker(
                 [34.43081002035992, 132.74690821784034],
                 {
 }
-            ).addTo(feature_group_5b35101d73aab914cfcc7eee8301400f);
+            ).addTo(feature_group_a5575cf15efa26583e9f9f19651bd8c1);
         
     
-            var div_icon_8087c39d9d631a1ebf3fa8122808e5ac = L.divIcon({
-  "html": "\n            \u003cdiv style=\"transform: translate(-50%, -50%);\"\u003e\n              \u003cdiv style=\"\n                  width:8px;\n                  height:8px;\n                  background:#0066cc;\n                  opacity:0.4;\n              \"\u003e\u003c/div\u003e\n            \u003c/div\u003e\n            ",
+            var div_icon_32804cd1e0afd37e864b9f19f80b0902 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#0066cc;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
   "iconSize": [8, 8],
   "iconAnchor": [4, 4],
   "popupAnchor": [0, -4],
@@ -452,35 +450,35 @@
 });
         
     
-        var popup_6f63c1ad841cdb9397f5b9b1d44b7266 = L.popup({
-  "maxWidth": 240,
+        var popup_2a340c11952be3266c698437118dd687 = L.popup({
+  "maxWidth": 260,
 });
 
         
             
-                var html_21d9d870f3a256861f474b3a163cea76 = $(`<div id="html_21d9d870f3a256861f474b3a163cea76" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://www.kamotsuru.jp/" target="_blank" rel="noopener noreferrer">賀茂鶴酒造</a>       </div>     </div></div>`)[0];
-                popup_6f63c1ad841cdb9397f5b9b1d44b7266.setContent(html_21d9d870f3a256861f474b3a163cea76);
+                var html_8b1cfc3e2fdf3ec5400481995608f3f3 = $(`<div id="html_8b1cfc3e2fdf3ec5400481995608f3f3" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://www.kamotsuru.jp/" target="_blank" rel="noopener noreferrer">賀茂鶴酒造</a>       </div>     </div></div>`)[0];
+                popup_2a340c11952be3266c698437118dd687.setContent(html_8b1cfc3e2fdf3ec5400481995608f3f3);
             
         
 
-        marker_84c04ff7a0d587cc3fe832c6425a78a2.bindPopup(popup_6f63c1ad841cdb9397f5b9b1d44b7266)
+        marker_32a4849e2f4e1302960c8a6429f99e6f.bindPopup(popup_2a340c11952be3266c698437118dd687)
         ;
 
         
     
     
-                marker_84c04ff7a0d587cc3fe832c6425a78a2.setIcon(div_icon_8087c39d9d631a1ebf3fa8122808e5ac);
+                marker_32a4849e2f4e1302960c8a6429f99e6f.setIcon(div_icon_32804cd1e0afd37e864b9f19f80b0902);
             
     
-            var marker_08221ac69a40811bcedfea98e3ea51a2 = L.marker(
+            var marker_a19b0fdcd21e6c0544d9ae5fb04e43e4 = L.marker(
                 [34.43067620914356, 132.7484354835056],
                 {
 }
-            ).addTo(feature_group_5b35101d73aab914cfcc7eee8301400f);
+            ).addTo(feature_group_a5575cf15efa26583e9f9f19651bd8c1);
         
     
-            var div_icon_339157776c1f2a07032c19aa9917b31a = L.divIcon({
-  "html": "\n            \u003cdiv style=\"transform: translate(-50%, -50%);\"\u003e\n              \u003cdiv style=\"\n                  width:8px;\n                  height:8px;\n                  background:#0066cc;\n                  opacity:0.4;\n              \"\u003e\u003c/div\u003e\n            \u003c/div\u003e\n            ",
+            var div_icon_f33cbf4205116f54c35ae35394059413 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#0066cc;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
   "iconSize": [8, 8],
   "iconAnchor": [4, 4],
   "popupAnchor": [0, -4],
@@ -488,35 +486,35 @@
 });
         
     
-        var popup_88c1265aeac47b3e87d985104924cc9d = L.popup({
-  "maxWidth": 240,
+        var popup_880ab46bebea5e6529763830a1258b2a = L.popup({
+  "maxWidth": 260,
 });
 
         
             
-                var html_048ac44eeb68dac7fbb06c5c7b1cebee = $(`<div id="html_048ac44eeb68dac7fbb06c5c7b1cebee" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://www.fukubijin.co.jp/" target="_blank" rel="noopener noreferrer">福美人酒造</a>       </div>     </div></div>`)[0];
-                popup_88c1265aeac47b3e87d985104924cc9d.setContent(html_048ac44eeb68dac7fbb06c5c7b1cebee);
+                var html_e473785cf50fc09398338cd0d2c5729a = $(`<div id="html_e473785cf50fc09398338cd0d2c5729a" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://www.fukubijin.co.jp/" target="_blank" rel="noopener noreferrer">福美人酒造</a>       </div>     </div></div>`)[0];
+                popup_880ab46bebea5e6529763830a1258b2a.setContent(html_e473785cf50fc09398338cd0d2c5729a);
             
         
 
-        marker_08221ac69a40811bcedfea98e3ea51a2.bindPopup(popup_88c1265aeac47b3e87d985104924cc9d)
+        marker_a19b0fdcd21e6c0544d9ae5fb04e43e4.bindPopup(popup_880ab46bebea5e6529763830a1258b2a)
         ;
 
         
     
     
-                marker_08221ac69a40811bcedfea98e3ea51a2.setIcon(div_icon_339157776c1f2a07032c19aa9917b31a);
+                marker_a19b0fdcd21e6c0544d9ae5fb04e43e4.setIcon(div_icon_f33cbf4205116f54c35ae35394059413);
             
     
-            var marker_9ea3b8751b2517485a65e3469f1f4f82 = L.marker(
+            var marker_eb3819f13780690cff5f56463e4075a4 = L.marker(
                 [34.430171955504484, 132.74557604173015],
                 {
 }
-            ).addTo(feature_group_5b35101d73aab914cfcc7eee8301400f);
+            ).addTo(feature_group_a5575cf15efa26583e9f9f19651bd8c1);
         
     
-            var div_icon_cc3eec3f20302bc50351d02d379c77b6 = L.divIcon({
-  "html": "\n            \u003cdiv style=\"transform: translate(-50%, -50%);\"\u003e\n              \u003cdiv style=\"\n                  width:8px;\n                  height:8px;\n                  background:#0066cc;\n                  opacity:0.4;\n              \"\u003e\u003c/div\u003e\n            \u003c/div\u003e\n            ",
+            var div_icon_8717d930ddc096fab1ef03968e7d5f46 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#0066cc;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
   "iconSize": [8, 8],
   "iconAnchor": [4, 4],
   "popupAnchor": [0, -4],
@@ -524,35 +522,35 @@
 });
         
     
-        var popup_8327fdd9ee44c47988eec511d28aba2e = L.popup({
-  "maxWidth": 240,
+        var popup_65a43ae8ea08d074ddfd6076c0069d4b = L.popup({
+  "maxWidth": 260,
 });
 
         
             
-                var html_c76d9f36edf26225c27fad83a3a9a21d = $(`<div id="html_c76d9f36edf26225c27fad83a3a9a21d" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://www.hakubotan.co.jp/" target="_blank" rel="noopener noreferrer">白牡丹酒造</a>       </div>     </div></div>`)[0];
-                popup_8327fdd9ee44c47988eec511d28aba2e.setContent(html_c76d9f36edf26225c27fad83a3a9a21d);
+                var html_a34073cdb35112044f20da1b542c59fd = $(`<div id="html_a34073cdb35112044f20da1b542c59fd" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://www.hakubotan.co.jp/" target="_blank" rel="noopener noreferrer">白牡丹酒造</a>       </div>     </div></div>`)[0];
+                popup_65a43ae8ea08d074ddfd6076c0069d4b.setContent(html_a34073cdb35112044f20da1b542c59fd);
             
         
 
-        marker_9ea3b8751b2517485a65e3469f1f4f82.bindPopup(popup_8327fdd9ee44c47988eec511d28aba2e)
+        marker_eb3819f13780690cff5f56463e4075a4.bindPopup(popup_65a43ae8ea08d074ddfd6076c0069d4b)
         ;
 
         
     
     
-                marker_9ea3b8751b2517485a65e3469f1f4f82.setIcon(div_icon_cc3eec3f20302bc50351d02d379c77b6);
+                marker_eb3819f13780690cff5f56463e4075a4.setIcon(div_icon_8717d930ddc096fab1ef03968e7d5f46);
             
     
-            var marker_4bf807bc3ccc6970f16cb7d55c1d39b3 = L.marker(
+            var marker_68bd1f01fdc267d921c144b2a0d0d805 = L.marker(
                 [34.43023825577051, 132.74623048788482],
                 {
 }
-            ).addTo(feature_group_5b35101d73aab914cfcc7eee8301400f);
+            ).addTo(feature_group_a5575cf15efa26583e9f9f19651bd8c1);
         
     
-            var div_icon_39d8f1002e6c6554ea4f98c51e134cd4 = L.divIcon({
-  "html": "\n            \u003cdiv style=\"transform: translate(-50%, -50%);\"\u003e\n              \u003cdiv style=\"\n                  width:8px;\n                  height:8px;\n                  background:#0066cc;\n                  opacity:0.4;\n              \"\u003e\u003c/div\u003e\n            \u003c/div\u003e\n            ",
+            var div_icon_07bbac167ed255373881550daaeec807 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#0066cc;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
   "iconSize": [8, 8],
   "iconAnchor": [4, 4],
   "popupAnchor": [0, -4],
@@ -560,35 +558,35 @@
 });
         
     
-        var popup_f22c50153a39db5bf17dd275fa170a45 = L.popup({
-  "maxWidth": 240,
+        var popup_13779d7ca40e3eb2f7992e6ed496c635 = L.popup({
+  "maxWidth": 260,
 });
 
         
             
-                var html_9dc7c72f9a0c8e2f49fbb0386b38e246 = $(`<div id="html_9dc7c72f9a0c8e2f49fbb0386b38e246" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://saijotsuru.co.jp/" target="_blank" rel="noopener noreferrer">西條鶴醸造</a>       </div>     </div></div>`)[0];
-                popup_f22c50153a39db5bf17dd275fa170a45.setContent(html_9dc7c72f9a0c8e2f49fbb0386b38e246);
+                var html_77bc82785329df98b596e0db4d767e48 = $(`<div id="html_77bc82785329df98b596e0db4d767e48" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://saijotsuru.co.jp/" target="_blank" rel="noopener noreferrer">西條鶴醸造</a>       </div>     </div></div>`)[0];
+                popup_13779d7ca40e3eb2f7992e6ed496c635.setContent(html_77bc82785329df98b596e0db4d767e48);
             
         
 
-        marker_4bf807bc3ccc6970f16cb7d55c1d39b3.bindPopup(popup_f22c50153a39db5bf17dd275fa170a45)
+        marker_68bd1f01fdc267d921c144b2a0d0d805.bindPopup(popup_13779d7ca40e3eb2f7992e6ed496c635)
         ;
 
         
     
     
-                marker_4bf807bc3ccc6970f16cb7d55c1d39b3.setIcon(div_icon_39d8f1002e6c6554ea4f98c51e134cd4);
+                marker_68bd1f01fdc267d921c144b2a0d0d805.setIcon(div_icon_07bbac167ed255373881550daaeec807);
             
     
-            var marker_43377df7384a3c7c4c33d8d83224fb62 = L.marker(
+            var marker_e52b579618e83f0bef5780135c4ff588 = L.marker(
                 [34.42997071056299, 132.74632478590777],
                 {
 }
-            ).addTo(feature_group_5b35101d73aab914cfcc7eee8301400f);
+            ).addTo(feature_group_a5575cf15efa26583e9f9f19651bd8c1);
         
     
-            var div_icon_f6700e21c9dc9c754949904e73779832 = L.divIcon({
-  "html": "\n            \u003cdiv style=\"transform: translate(-50%, -50%);\"\u003e\n              \u003cdiv style=\"\n                  width:8px;\n                  height:8px;\n                  background:#0066cc;\n                  opacity:0.4;\n              \"\u003e\u003c/div\u003e\n            \u003c/div\u003e\n            ",
+            var div_icon_077c7b1e9ba1d7846f2303b1362f4bbd = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#0066cc;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
   "iconSize": [8, 8],
   "iconAnchor": [4, 4],
   "popupAnchor": [0, -4],
@@ -596,35 +594,35 @@
 });
         
     
-        var popup_12e732748e39699a711348d16bf8fb2f = L.popup({
-  "maxWidth": 240,
+        var popup_cb9fad46be0b01e2ed08fc49990953e9 = L.popup({
+  "maxWidth": 260,
 });
 
         
             
-                var html_71884ba367beb0350c6b400703489d3f = $(`<div id="html_71884ba367beb0350c6b400703489d3f" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://kireikireikirei.jimdofree.com/" target="_blank" rel="noopener noreferrer">亀齢酒造</a>       </div>     </div></div>`)[0];
-                popup_12e732748e39699a711348d16bf8fb2f.setContent(html_71884ba367beb0350c6b400703489d3f);
+                var html_af6c9c8b2f651bbcb287b21ba315b397 = $(`<div id="html_af6c9c8b2f651bbcb287b21ba315b397" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://kireikireikirei.jimdofree.com/" target="_blank" rel="noopener noreferrer">亀齢酒造</a>       </div>     </div></div>`)[0];
+                popup_cb9fad46be0b01e2ed08fc49990953e9.setContent(html_af6c9c8b2f651bbcb287b21ba315b397);
             
         
 
-        marker_43377df7384a3c7c4c33d8d83224fb62.bindPopup(popup_12e732748e39699a711348d16bf8fb2f)
+        marker_e52b579618e83f0bef5780135c4ff588.bindPopup(popup_cb9fad46be0b01e2ed08fc49990953e9)
         ;
 
         
     
     
-                marker_43377df7384a3c7c4c33d8d83224fb62.setIcon(div_icon_f6700e21c9dc9c754949904e73779832);
+                marker_e52b579618e83f0bef5780135c4ff588.setIcon(div_icon_077c7b1e9ba1d7846f2303b1362f4bbd);
             
     
-            var marker_ab0aae215b761b42cb1f9009ee63f27f = L.marker(
+            var marker_7225b365787072279114027afb265f0e = L.marker(
                 [34.429531610247786, 132.7488761245397],
                 {
 }
-            ).addTo(feature_group_5b35101d73aab914cfcc7eee8301400f);
+            ).addTo(feature_group_a5575cf15efa26583e9f9f19651bd8c1);
         
     
-            var div_icon_6cfd4678a5fec2cf2416954c59cd1175 = L.divIcon({
-  "html": "\n            \u003cdiv style=\"transform: translate(-50%, -50%);\"\u003e\n              \u003cdiv style=\"\n                  width:8px;\n                  height:8px;\n                  background:#0066cc;\n                  opacity:0.4;\n              \"\u003e\u003c/div\u003e\n            \u003c/div\u003e\n            ",
+            var div_icon_a92238e9dd63e34e5467a76aa3c2fa8c = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#0066cc;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
   "iconSize": [8, 8],
   "iconAnchor": [4, 4],
   "popupAnchor": [0, -4],
@@ -632,35 +630,35 @@
 });
         
     
-        var popup_aac0242ab6c7d8d361f6139cdcea1ebc = L.popup({
-  "maxWidth": 240,
+        var popup_746c778051a13e596c03069eb7b09d81 = L.popup({
+  "maxWidth": 260,
 });
 
         
             
-                var html_622919372b9f2d46c29ee0449cd98865 = $(`<div id="html_622919372b9f2d46c29ee0449cd98865" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://www.kamoizumi.co.jp/" target="_blank" rel="noopener noreferrer">賀茂泉酒造</a>       </div>     </div></div>`)[0];
-                popup_aac0242ab6c7d8d361f6139cdcea1ebc.setContent(html_622919372b9f2d46c29ee0449cd98865);
+                var html_bcffd24a71c8e526ae85520a942d586d = $(`<div id="html_bcffd24a71c8e526ae85520a942d586d" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://www.kamoizumi.co.jp/" target="_blank" rel="noopener noreferrer">賀茂泉酒造</a>       </div>     </div></div>`)[0];
+                popup_746c778051a13e596c03069eb7b09d81.setContent(html_bcffd24a71c8e526ae85520a942d586d);
             
         
 
-        marker_ab0aae215b761b42cb1f9009ee63f27f.bindPopup(popup_aac0242ab6c7d8d361f6139cdcea1ebc)
+        marker_7225b365787072279114027afb265f0e.bindPopup(popup_746c778051a13e596c03069eb7b09d81)
         ;
 
         
     
     
-                marker_ab0aae215b761b42cb1f9009ee63f27f.setIcon(div_icon_6cfd4678a5fec2cf2416954c59cd1175);
+                marker_7225b365787072279114027afb265f0e.setIcon(div_icon_a92238e9dd63e34e5467a76aa3c2fa8c);
             
     
-            var marker_96dfc7fa4fcad5a3df8c439c0ec126f5 = L.marker(
+            var marker_c604387b20143d767cdc7331c7dd4973 = L.marker(
                 [34.43015921151904, 132.7407673282366],
                 {
 }
-            ).addTo(feature_group_5b35101d73aab914cfcc7eee8301400f);
+            ).addTo(feature_group_a5575cf15efa26583e9f9f19651bd8c1);
         
     
-            var div_icon_2ceffe890c5b03876a4a94e7ba1c147f = L.divIcon({
-  "html": "\n            \u003cdiv style=\"transform: translate(-50%, -50%);\"\u003e\n              \u003cdiv style=\"\n                  width:8px;\n                  height:8px;\n                  background:#0066cc;\n                  opacity:0.4;\n              \"\u003e\u003c/div\u003e\n            \u003c/div\u003e\n            ",
+            var div_icon_bfc94d3033cb93c948fbd18d18572849 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#0066cc;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
   "iconSize": [8, 8],
   "iconAnchor": [4, 4],
   "popupAnchor": [0, -4],
@@ -668,35 +666,35 @@
 });
         
     
-        var popup_118bd98f62352b8dc90af0eca6db5900 = L.popup({
-  "maxWidth": 240,
+        var popup_8d294a0d6947d8cd8e0053b06d65735d = L.popup({
+  "maxWidth": 260,
 });
 
         
             
-                var html_3236a08f865ad289e3d16610493662ea = $(`<div id="html_3236a08f865ad289e3d16610493662ea" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://sanyotsuru.jp/" target="_blank" rel="noopener noreferrer">山陽鶴酒造</a>       </div>     </div></div>`)[0];
-                popup_118bd98f62352b8dc90af0eca6db5900.setContent(html_3236a08f865ad289e3d16610493662ea);
+                var html_c39877e28eaf354636e70d1caef9f474 = $(`<div id="html_c39877e28eaf354636e70d1caef9f474" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://sanyotsuru.jp/" target="_blank" rel="noopener noreferrer">山陽鶴酒造</a>       </div>     </div></div>`)[0];
+                popup_8d294a0d6947d8cd8e0053b06d65735d.setContent(html_c39877e28eaf354636e70d1caef9f474);
             
         
 
-        marker_96dfc7fa4fcad5a3df8c439c0ec126f5.bindPopup(popup_118bd98f62352b8dc90af0eca6db5900)
+        marker_c604387b20143d767cdc7331c7dd4973.bindPopup(popup_8d294a0d6947d8cd8e0053b06d65735d)
         ;
 
         
     
     
-                marker_96dfc7fa4fcad5a3df8c439c0ec126f5.setIcon(div_icon_2ceffe890c5b03876a4a94e7ba1c147f);
+                marker_c604387b20143d767cdc7331c7dd4973.setIcon(div_icon_bfc94d3033cb93c948fbd18d18572849);
             
     
-            var marker_02ae2b3eac6b5d536f2888b16fb58873 = L.marker(
+            var marker_47ba4e2e91fe75799c171d48d45dcd79 = L.marker(
                 [34.335531998510525, 132.69173755337283],
                 {
 }
-            ).addTo(feature_group_5b35101d73aab914cfcc7eee8301400f);
+            ).addTo(feature_group_a5575cf15efa26583e9f9f19651bd8c1);
         
     
-            var div_icon_096a32dc43d4013d1a3358effd8cecf8 = L.divIcon({
-  "html": "\n            \u003cdiv style=\"transform: translate(-50%, -50%);\"\u003e\n              \u003cdiv style=\"\n                  width:8px;\n                  height:8px;\n                  background:#0066cc;\n                  opacity:0.4;\n              \"\u003e\u003c/div\u003e\n            \u003c/div\u003e\n            ",
+            var div_icon_1b20d8a8947c6a96093457d3096346ac = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#0066cc;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
   "iconSize": [8, 8],
   "iconAnchor": [4, 4],
   "popupAnchor": [0, -4],
@@ -704,35 +702,35 @@
 });
         
     
-        var popup_860816d02bf98c7248ff79d4bbedc6a6 = L.popup({
-  "maxWidth": 240,
+        var popup_11d446d8f53d662a87e500677547e9ef = L.popup({
+  "maxWidth": 260,
 });
 
         
             
-                var html_1eb539cfab0f408084cf828074ae4a2d = $(`<div id="html_1eb539cfab0f408084cf828074ae4a2d" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://www.kamokin.com/" target="_blank" rel="noopener noreferrer">金光酒造</a>       </div>     </div></div>`)[0];
-                popup_860816d02bf98c7248ff79d4bbedc6a6.setContent(html_1eb539cfab0f408084cf828074ae4a2d);
+                var html_cf4f523016dd58a9495e179b7938b9f5 = $(`<div id="html_cf4f523016dd58a9495e179b7938b9f5" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://www.kamokin.com/" target="_blank" rel="noopener noreferrer">金光酒造</a>       </div>     </div></div>`)[0];
+                popup_11d446d8f53d662a87e500677547e9ef.setContent(html_cf4f523016dd58a9495e179b7938b9f5);
             
         
 
-        marker_02ae2b3eac6b5d536f2888b16fb58873.bindPopup(popup_860816d02bf98c7248ff79d4bbedc6a6)
+        marker_47ba4e2e91fe75799c171d48d45dcd79.bindPopup(popup_11d446d8f53d662a87e500677547e9ef)
         ;
 
         
     
     
-                marker_02ae2b3eac6b5d536f2888b16fb58873.setIcon(div_icon_096a32dc43d4013d1a3358effd8cecf8);
+                marker_47ba4e2e91fe75799c171d48d45dcd79.setIcon(div_icon_1b20d8a8947c6a96093457d3096346ac);
             
     
-            var marker_78b738756534b1bc162ef855cd80ba0f = L.marker(
+            var marker_6a190092639df4dfbfd1470196c19eda = L.marker(
                 [34.28317672587351, 132.72937183197666],
                 {
 }
-            ).addTo(feature_group_5b35101d73aab914cfcc7eee8301400f);
+            ).addTo(feature_group_a5575cf15efa26583e9f9f19651bd8c1);
         
     
-            var div_icon_d8d14f7641f1329fa09c744ed1dcb17d = L.divIcon({
-  "html": "\n            \u003cdiv style=\"transform: translate(-50%, -50%);\"\u003e\n              \u003cdiv style=\"\n                  width:8px;\n                  height:8px;\n                  background:#0066cc;\n                  opacity:0.4;\n              \"\u003e\u003c/div\u003e\n            \u003c/div\u003e\n            ",
+            var div_icon_d17bdca7af9b5699e6bf473d91f4f0ba = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#0066cc;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
   "iconSize": [8, 8],
   "iconAnchor": [4, 4],
   "popupAnchor": [0, -4],
@@ -740,35 +738,35 @@
 });
         
     
-        var popup_e9322543a1627c765b12591bbbcb3c0e = L.popup({
-  "maxWidth": 240,
+        var popup_d9e159b3677b9c7fdb20027f79df3e90 = L.popup({
+  "maxWidth": 260,
 });
 
         
             
-                var html_8decbc29eea75f8d248bdb2f83ef2e33 = $(`<div id="html_8decbc29eea75f8d248bdb2f83ef2e33" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://morikawa-shuzo.com/" target="_blank" rel="noopener noreferrer">盛川酒造</a>       </div>     </div></div>`)[0];
-                popup_e9322543a1627c765b12591bbbcb3c0e.setContent(html_8decbc29eea75f8d248bdb2f83ef2e33);
+                var html_8427352adc775fc15041010c4353f796 = $(`<div id="html_8427352adc775fc15041010c4353f796" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://morikawa-shuzo.com/" target="_blank" rel="noopener noreferrer">盛川酒造</a>       </div>     </div></div>`)[0];
+                popup_d9e159b3677b9c7fdb20027f79df3e90.setContent(html_8427352adc775fc15041010c4353f796);
             
         
 
-        marker_78b738756534b1bc162ef855cd80ba0f.bindPopup(popup_e9322543a1627c765b12591bbbcb3c0e)
+        marker_6a190092639df4dfbfd1470196c19eda.bindPopup(popup_d9e159b3677b9c7fdb20027f79df3e90)
         ;
 
         
     
     
-                marker_78b738756534b1bc162ef855cd80ba0f.setIcon(div_icon_d8d14f7641f1329fa09c744ed1dcb17d);
+                marker_6a190092639df4dfbfd1470196c19eda.setIcon(div_icon_d17bdca7af9b5699e6bf473d91f4f0ba);
             
     
-            var marker_6be81c023100506362d7db71333b1152 = L.marker(
+            var marker_af5bf1d54ceeb500e8647575a5621cbd = L.marker(
                 [34.226120945255545, 132.65533216530378],
                 {
 }
-            ).addTo(feature_group_5b35101d73aab914cfcc7eee8301400f);
+            ).addTo(feature_group_a5575cf15efa26583e9f9f19651bd8c1);
         
     
-            var div_icon_09c9038642798099d53431cb270bac1e = L.divIcon({
-  "html": "\n            \u003cdiv style=\"transform: translate(-50%, -50%);\"\u003e\n              \u003cdiv style=\"\n                  width:8px;\n                  height:8px;\n                  background:#0066cc;\n                  opacity:0.4;\n              \"\u003e\u003c/div\u003e\n            \u003c/div\u003e\n            ",
+            var div_icon_a109b1d4a9ac7ea6959ec573ed912c45 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#0066cc;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
   "iconSize": [8, 8],
   "iconAnchor": [4, 4],
   "popupAnchor": [0, -4],
@@ -776,35 +774,35 @@
 });
         
     
-        var popup_afdbee2ef0c4935a9d38a9fc30b45984 = L.popup({
-  "maxWidth": 240,
+        var popup_966e666637820c2d17df524352506c28 = L.popup({
+  "maxWidth": 260,
 });
 
         
             
-                var html_5191d93adece012c2861a4cb4e480190 = $(`<div id="html_5191d93adece012c2861a4cb4e480190" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://imadeya.co.jp/blogs/brewery/houken" target="_blank" rel="noopener noreferrer">宝剣酒造</a>       </div>     </div></div>`)[0];
-                popup_afdbee2ef0c4935a9d38a9fc30b45984.setContent(html_5191d93adece012c2861a4cb4e480190);
+                var html_65e147609aa370e6f727fdc51433573e = $(`<div id="html_65e147609aa370e6f727fdc51433573e" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://imadeya.co.jp/blogs/brewery/houken" target="_blank" rel="noopener noreferrer">宝剣酒造</a>       </div>     </div></div>`)[0];
+                popup_966e666637820c2d17df524352506c28.setContent(html_65e147609aa370e6f727fdc51433573e);
             
         
 
-        marker_6be81c023100506362d7db71333b1152.bindPopup(popup_afdbee2ef0c4935a9d38a9fc30b45984)
+        marker_af5bf1d54ceeb500e8647575a5621cbd.bindPopup(popup_966e666637820c2d17df524352506c28)
         ;
 
         
     
     
-                marker_6be81c023100506362d7db71333b1152.setIcon(div_icon_09c9038642798099d53431cb270bac1e);
+                marker_af5bf1d54ceeb500e8647575a5621cbd.setIcon(div_icon_a109b1d4a9ac7ea6959ec573ed912c45);
             
     
-            var marker_659ef31da0cec9039639075c99903b46 = L.marker(
+            var marker_9a94ebd4d1630a2ad8a1cfbc2a6e6606 = L.marker(
                 [34.22824992510996, 132.65078313904758],
                 {
 }
-            ).addTo(feature_group_5b35101d73aab914cfcc7eee8301400f);
+            ).addTo(feature_group_a5575cf15efa26583e9f9f19651bd8c1);
         
     
-            var div_icon_7e0d0bdaf9448d50bd65d9f9ad4395f8 = L.divIcon({
-  "html": "\n            \u003cdiv style=\"transform: translate(-50%, -50%);\"\u003e\n              \u003cdiv style=\"\n                  width:8px;\n                  height:8px;\n                  background:#0066cc;\n                  opacity:0.4;\n              \"\u003e\u003c/div\u003e\n            \u003c/div\u003e\n            ",
+            var div_icon_55c3bacb11b5f0d268cd96b30e9a24b7 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#0066cc;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
   "iconSize": [8, 8],
   "iconAnchor": [4, 4],
   "popupAnchor": [0, -4],
@@ -812,35 +810,35 @@
 });
         
     
-        var popup_f6342f6a977bdeda8adae5c131f4d35b = L.popup({
-  "maxWidth": 240,
+        var popup_bec134b3b1509a093f5f57f4fc7f6d51 = L.popup({
+  "maxWidth": 260,
 });
 
         
             
-                var html_22d717c2d64d9f7a65da0e8cddb01f56 = $(`<div id="html_22d717c2d64d9f7a65da0e8cddb01f56" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://www.ugonotsuki.com/" target="_blank" rel="noopener noreferrer">相原酒造</a>       </div>     </div></div>`)[0];
-                popup_f6342f6a977bdeda8adae5c131f4d35b.setContent(html_22d717c2d64d9f7a65da0e8cddb01f56);
+                var html_19b59bd0319c22d2362c834d7049c0aa = $(`<div id="html_19b59bd0319c22d2362c834d7049c0aa" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://www.ugonotsuki.com/" target="_blank" rel="noopener noreferrer">相原酒造</a>       </div>     </div></div>`)[0];
+                popup_bec134b3b1509a093f5f57f4fc7f6d51.setContent(html_19b59bd0319c22d2362c834d7049c0aa);
             
         
 
-        marker_659ef31da0cec9039639075c99903b46.bindPopup(popup_f6342f6a977bdeda8adae5c131f4d35b)
+        marker_9a94ebd4d1630a2ad8a1cfbc2a6e6606.bindPopup(popup_bec134b3b1509a093f5f57f4fc7f6d51)
         ;
 
         
     
     
-                marker_659ef31da0cec9039639075c99903b46.setIcon(div_icon_7e0d0bdaf9448d50bd65d9f9ad4395f8);
+                marker_9a94ebd4d1630a2ad8a1cfbc2a6e6606.setIcon(div_icon_55c3bacb11b5f0d268cd96b30e9a24b7);
             
     
-            var marker_c661bc512c1bd8eb001142f9b02040a0 = L.marker(
+            var marker_50ea619ff5af9799252419da9bbca5c0 = L.marker(
                 [34.252229387177515, 132.57740022433634],
                 {
 }
-            ).addTo(feature_group_5b35101d73aab914cfcc7eee8301400f);
+            ).addTo(feature_group_a5575cf15efa26583e9f9f19651bd8c1);
         
     
-            var div_icon_524c476785088d8de8f95bf36c52978e = L.divIcon({
-  "html": "\n            \u003cdiv style=\"transform: translate(-50%, -50%);\"\u003e\n              \u003cdiv style=\"\n                  width:8px;\n                  height:8px;\n                  background:#0066cc;\n                  opacity:0.4;\n              \"\u003e\u003c/div\u003e\n            \u003c/div\u003e\n            ",
+            var div_icon_6398e801e1719497254178fcd377a719 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#0066cc;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
   "iconSize": [8, 8],
   "iconAnchor": [4, 4],
   "popupAnchor": [0, -4],
@@ -848,35 +846,35 @@
 });
         
     
-        var popup_f9f2f2f411fe0bab459aba6371bb2312 = L.popup({
-  "maxWidth": 240,
+        var popup_ae7a6dc4d6a2ad6fabcae3df939f8e15 = L.popup({
+  "maxWidth": 260,
 });
 
         
             
-                var html_ab8bfb33109244661ac15bee6bb7b2d1 = $(`<div id="html_ab8bfb33109244661ac15bee6bb7b2d1" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://sempuku.co.jp/" target="_blank" rel="noopener noreferrer">千福・三宅本店</a>       </div>     </div></div>`)[0];
-                popup_f9f2f2f411fe0bab459aba6371bb2312.setContent(html_ab8bfb33109244661ac15bee6bb7b2d1);
+                var html_5d7223b01536fb53e65ddfcfa9efec59 = $(`<div id="html_5d7223b01536fb53e65ddfcfa9efec59" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://sempuku.co.jp/" target="_blank" rel="noopener noreferrer">千福・三宅本店</a>       </div>     </div></div>`)[0];
+                popup_ae7a6dc4d6a2ad6fabcae3df939f8e15.setContent(html_5d7223b01536fb53e65ddfcfa9efec59);
             
         
 
-        marker_c661bc512c1bd8eb001142f9b02040a0.bindPopup(popup_f9f2f2f411fe0bab459aba6371bb2312)
+        marker_50ea619ff5af9799252419da9bbca5c0.bindPopup(popup_ae7a6dc4d6a2ad6fabcae3df939f8e15)
         ;
 
         
     
     
-                marker_c661bc512c1bd8eb001142f9b02040a0.setIcon(div_icon_524c476785088d8de8f95bf36c52978e);
+                marker_50ea619ff5af9799252419da9bbca5c0.setIcon(div_icon_6398e801e1719497254178fcd377a719);
             
     
-            var marker_5a737de71a69f29013c983d2cb45f193 = L.marker(
+            var marker_5d8b1e478f979d5a85f6cb736a2b48f9 = L.marker(
                 [34.19774715244936, 132.5328791871293],
                 {
 }
-            ).addTo(feature_group_5b35101d73aab914cfcc7eee8301400f);
+            ).addTo(feature_group_a5575cf15efa26583e9f9f19651bd8c1);
         
     
-            var div_icon_204bed880d6fdc7d8ac651ee86b1df87 = L.divIcon({
-  "html": "\n            \u003cdiv style=\"transform: translate(-50%, -50%);\"\u003e\n              \u003cdiv style=\"\n                  width:8px;\n                  height:8px;\n                  background:#0066cc;\n                  opacity:0.4;\n              \"\u003e\u003c/div\u003e\n            \u003c/div\u003e\n            ",
+            var div_icon_68439bae9e94b4be475bdc6d711c1416 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#0066cc;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
   "iconSize": [8, 8],
   "iconAnchor": [4, 4],
   "popupAnchor": [0, -4],
@@ -884,35 +882,35 @@
 });
         
     
-        var popup_983233d5ca14124e176047dde9c059ba = L.popup({
-  "maxWidth": 240,
+        var popup_f0a4e76605369e4a7ee75198a90136d8 = L.popup({
+  "maxWidth": 260,
 });
 
         
             
-                var html_31b58edc8785186d2c60b887b7ad548e = $(`<div id="html_31b58edc8785186d2c60b887b7ad548e" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://hanahato.ocnk.net/" target="_blank" rel="noopener noreferrer">榎酒造</a>       </div>     </div></div>`)[0];
-                popup_983233d5ca14124e176047dde9c059ba.setContent(html_31b58edc8785186d2c60b887b7ad548e);
+                var html_0d0c16f868f904aa90c5e38d98e031c1 = $(`<div id="html_0d0c16f868f904aa90c5e38d98e031c1" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://hanahato.ocnk.net/" target="_blank" rel="noopener noreferrer">榎酒造</a>       </div>     </div></div>`)[0];
+                popup_f0a4e76605369e4a7ee75198a90136d8.setContent(html_0d0c16f868f904aa90c5e38d98e031c1);
             
         
 
-        marker_5a737de71a69f29013c983d2cb45f193.bindPopup(popup_983233d5ca14124e176047dde9c059ba)
+        marker_5d8b1e478f979d5a85f6cb736a2b48f9.bindPopup(popup_f0a4e76605369e4a7ee75198a90136d8)
         ;
 
         
     
     
-                marker_5a737de71a69f29013c983d2cb45f193.setIcon(div_icon_204bed880d6fdc7d8ac651ee86b1df87);
+                marker_5d8b1e478f979d5a85f6cb736a2b48f9.setIcon(div_icon_68439bae9e94b4be475bdc6d711c1416);
             
     
-            var marker_87cd8bf673675e7e36fd09876534a458 = L.marker(
+            var marker_34701df3e1808933080af8ec3da6255f = L.marker(
                 [34.111847484333914, 132.54368534438856],
                 {
 }
-            ).addTo(feature_group_5b35101d73aab914cfcc7eee8301400f);
+            ).addTo(feature_group_a5575cf15efa26583e9f9f19651bd8c1);
         
     
-            var div_icon_9fd2db45e0a1a4928d25200bc2c6f2ca = L.divIcon({
-  "html": "\n            \u003cdiv style=\"transform: translate(-50%, -50%);\"\u003e\n              \u003cdiv style=\"\n                  width:8px;\n                  height:8px;\n                  background:#0066cc;\n                  opacity:0.4;\n              \"\u003e\u003c/div\u003e\n            \u003c/div\u003e\n            ",
+            var div_icon_30be846154f5e846e1817fcbcc78f6ba = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#0066cc;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
   "iconSize": [8, 8],
   "iconAnchor": [4, 4],
   "popupAnchor": [0, -4],
@@ -920,35 +918,35 @@
 });
         
     
-        var popup_41f7915fc992175f490f4f2b149e8eb9 = L.popup({
-  "maxWidth": 240,
+        var popup_6795bbe144bdb7b9a0fab1a56531042e = L.popup({
+  "maxWidth": 260,
 });
 
         
             
-                var html_3c21709f48e623afca2b7cded9db7120 = $(`<div id="html_3c21709f48e623afca2b7cded9db7120" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://hayashi-shuzo.com/" target="_blank" rel="noopener noreferrer">林酒造</a>       </div>     </div></div>`)[0];
-                popup_41f7915fc992175f490f4f2b149e8eb9.setContent(html_3c21709f48e623afca2b7cded9db7120);
+                var html_7f4fc2abd83af54baf72a81585509c8f = $(`<div id="html_7f4fc2abd83af54baf72a81585509c8f" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://hayashi-shuzo.com/" target="_blank" rel="noopener noreferrer">林酒造</a>       </div>     </div></div>`)[0];
+                popup_6795bbe144bdb7b9a0fab1a56531042e.setContent(html_7f4fc2abd83af54baf72a81585509c8f);
             
         
 
-        marker_87cd8bf673675e7e36fd09876534a458.bindPopup(popup_41f7915fc992175f490f4f2b149e8eb9)
+        marker_34701df3e1808933080af8ec3da6255f.bindPopup(popup_6795bbe144bdb7b9a0fab1a56531042e)
         ;
 
         
     
     
-                marker_87cd8bf673675e7e36fd09876534a458.setIcon(div_icon_9fd2db45e0a1a4928d25200bc2c6f2ca);
+                marker_34701df3e1808933080af8ec3da6255f.setIcon(div_icon_30be846154f5e846e1817fcbcc78f6ba);
             
     
-            var marker_de3930e4dd80caf87efc89e51ab67b72 = L.marker(
+            var marker_934fe834512e06d01e36603e3dfd52d6 = L.marker(
                 [34.237520154272524, 132.91773649754836],
                 {
 }
-            ).addTo(feature_group_5b35101d73aab914cfcc7eee8301400f);
+            ).addTo(feature_group_a5575cf15efa26583e9f9f19651bd8c1);
         
     
-            var div_icon_4c5cf4668fcee26d914a67c9eeb17d35 = L.divIcon({
-  "html": "\n            \u003cdiv style=\"transform: translate(-50%, -50%);\"\u003e\n              \u003cdiv style=\"\n                  width:8px;\n                  height:8px;\n                  background:#0066cc;\n                  opacity:0.4;\n              \"\u003e\u003c/div\u003e\n            \u003c/div\u003e\n            ",
+            var div_icon_ce0795d4477a00621db4f51b235196d6 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#0066cc;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
   "iconSize": [8, 8],
   "iconAnchor": [4, 4],
   "popupAnchor": [0, -4],
@@ -956,35 +954,35 @@
 });
         
     
-        var popup_9b0248330cb40e0330ceccdd632bfea7 = L.popup({
-  "maxWidth": 240,
+        var popup_121124047912c80243013c6706a7d132 = L.popup({
+  "maxWidth": 260,
 });
 
         
             
-                var html_8c9b5bf63b7c80333f5b8409966e90d0 = $(`<div id="html_8c9b5bf63b7c80333f5b8409966e90d0" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://michishio.base.ec/" target="_blank" rel="noopener noreferrer">MICHISHIO BREWING</a>       </div>     </div></div>`)[0];
-                popup_9b0248330cb40e0330ceccdd632bfea7.setContent(html_8c9b5bf63b7c80333f5b8409966e90d0);
+                var html_f2bca914f6ba93568405713ecea8f1a9 = $(`<div id="html_f2bca914f6ba93568405713ecea8f1a9" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://michishio.base.ec/" target="_blank" rel="noopener noreferrer">MICHISHIO BREWING</a>       </div>     </div></div>`)[0];
+                popup_121124047912c80243013c6706a7d132.setContent(html_f2bca914f6ba93568405713ecea8f1a9);
             
         
 
-        marker_de3930e4dd80caf87efc89e51ab67b72.bindPopup(popup_9b0248330cb40e0330ceccdd632bfea7)
+        marker_934fe834512e06d01e36603e3dfd52d6.bindPopup(popup_121124047912c80243013c6706a7d132)
         ;
 
         
     
     
-                marker_de3930e4dd80caf87efc89e51ab67b72.setIcon(div_icon_4c5cf4668fcee26d914a67c9eeb17d35);
+                marker_934fe834512e06d01e36603e3dfd52d6.setIcon(div_icon_ce0795d4477a00621db4f51b235196d6);
             
     
-            var marker_ebbddb59d51ae71cbb4b2df52b92cbfe = L.marker(
+            var marker_76fd5d94ac386706eb3c1f7fa3e77154 = L.marker(
                 [34.19143258624638, 132.8192631996505],
                 {
 }
-            ).addTo(feature_group_5b35101d73aab914cfcc7eee8301400f);
+            ).addTo(feature_group_a5575cf15efa26583e9f9f19651bd8c1);
         
     
-            var div_icon_44a0d42e1c526b1976bb441cb791d7ef = L.divIcon({
-  "html": "\n            \u003cdiv style=\"transform: translate(-50%, -50%);\"\u003e\n              \u003cdiv style=\"\n                  width:8px;\n                  height:8px;\n                  background:#0066cc;\n                  opacity:0.4;\n              \"\u003e\u003c/div\u003e\n            \u003c/div\u003e\n            ",
+            var div_icon_a4ec8375fb034aaa16f9463942c4bdca = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#0066cc;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
   "iconSize": [8, 8],
   "iconAnchor": [4, 4],
   "popupAnchor": [0, -4],
@@ -992,35 +990,35 @@
 });
         
     
-        var popup_e373288cf386ed9dfab21ba085e78303 = L.popup({
-  "maxWidth": 240,
+        var popup_611e008ebe8c2aba7fc4b0c52dc84c6a = L.popup({
+  "maxWidth": 260,
 });
 
         
             
-                var html_e32b7322b449270dba663942e5f4e68d = $(`<div id="html_e32b7322b449270dba663942e5f4e68d" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://naorai.co/" target="_blank" rel="noopener noreferrer">ナオライ</a>       </div>     </div></div>`)[0];
-                popup_e373288cf386ed9dfab21ba085e78303.setContent(html_e32b7322b449270dba663942e5f4e68d);
+                var html_6a0c487b5c9426fbffaa86025ab53dfe = $(`<div id="html_6a0c487b5c9426fbffaa86025ab53dfe" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://naorai.co/" target="_blank" rel="noopener noreferrer">ナオライ</a>       </div>     </div></div>`)[0];
+                popup_611e008ebe8c2aba7fc4b0c52dc84c6a.setContent(html_6a0c487b5c9426fbffaa86025ab53dfe);
             
         
 
-        marker_ebbddb59d51ae71cbb4b2df52b92cbfe.bindPopup(popup_e373288cf386ed9dfab21ba085e78303)
+        marker_76fd5d94ac386706eb3c1f7fa3e77154.bindPopup(popup_611e008ebe8c2aba7fc4b0c52dc84c6a)
         ;
 
         
     
     
-                marker_ebbddb59d51ae71cbb4b2df52b92cbfe.setIcon(div_icon_44a0d42e1c526b1976bb441cb791d7ef);
+                marker_76fd5d94ac386706eb3c1f7fa3e77154.setIcon(div_icon_a4ec8375fb034aaa16f9463942c4bdca);
             
     
-            var marker_6a859ef07c004c7d7806d160e05cff19 = L.marker(
+            var marker_3e48ed32be3e49649b59752a7312c657 = L.marker(
                 [34.24832153810757, 133.00040659754848],
                 {
 }
-            ).addTo(feature_group_5b35101d73aab914cfcc7eee8301400f);
+            ).addTo(feature_group_a5575cf15efa26583e9f9f19651bd8c1);
         
     
-            var div_icon_799f35980549cfbb31ec7b9341f9ff5b = L.divIcon({
-  "html": "\n            \u003cdiv style=\"transform: translate(-50%, -50%);\"\u003e\n              \u003cdiv style=\"\n                  width:8px;\n                  height:8px;\n                  background:#0066cc;\n                  opacity:0.4;\n              \"\u003e\u003c/div\u003e\n            \u003c/div\u003e\n            ",
+            var div_icon_e19bd090b36d8d872b8190fd0e9675c8 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#0066cc;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
   "iconSize": [8, 8],
   "iconAnchor": [4, 4],
   "popupAnchor": [0, -4],
@@ -1028,44 +1026,44 @@
 });
         
     
-        var popup_8094ccedc003dfcb87075a53b7f3ceba = L.popup({
-  "maxWidth": 240,
+        var popup_d9fed828bc8108818207b93269778046 = L.popup({
+  "maxWidth": 260,
 });
 
         
             
-                var html_947bfe30d69425dccd2d4cdbe07a81d9 = $(`<div id="html_947bfe30d69425dccd2d4cdbe07a81d9" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="http://www.ohmishimawine.com/" target="_blank" rel="noopener noreferrer">大三島みんなのワイナリー</a>       </div>     </div></div>`)[0];
-                popup_8094ccedc003dfcb87075a53b7f3ceba.setContent(html_947bfe30d69425dccd2d4cdbe07a81d9);
+                var html_972c476b93705892d4a95f74cff126b6 = $(`<div id="html_972c476b93705892d4a95f74cff126b6" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="http://www.ohmishimawine.com/" target="_blank" rel="noopener noreferrer">大三島みんなのワイナリー</a>       </div>     </div></div>`)[0];
+                popup_d9fed828bc8108818207b93269778046.setContent(html_972c476b93705892d4a95f74cff126b6);
             
         
 
-        marker_6a859ef07c004c7d7806d160e05cff19.bindPopup(popup_8094ccedc003dfcb87075a53b7f3ceba)
+        marker_3e48ed32be3e49649b59752a7312c657.bindPopup(popup_d9fed828bc8108818207b93269778046)
         ;
 
         
     
     
-                marker_6a859ef07c004c7d7806d160e05cff19.setIcon(div_icon_799f35980549cfbb31ec7b9341f9ff5b);
+                marker_3e48ed32be3e49649b59752a7312c657.setIcon(div_icon_e19bd090b36d8d872b8190fd0e9675c8);
             
     
-            feature_group_5b35101d73aab914cfcc7eee8301400f.addTo(map_ffc24eced89555f62d0224f1c7533e13);
+            feature_group_a5575cf15efa26583e9f9f19651bd8c1.addTo(map_53dc65b621e099d0657b6f23d54d4a28);
         
     
-            var feature_group_ca2b0991314f9c3ae0c70e6bed236ac9 = L.featureGroup(
+            var feature_group_0c0c23429eaa1562d4586fa25bfecac4 = L.featureGroup(
                 {
 }
             );
         
     
-            var marker_a14b813db927bb083e9554ae167a3ffb = L.marker(
+            var marker_9b37f5b29170fc7a7e9aca1b101edb18 = L.marker(
                 [34.43419950338322, 132.74875053057923],
                 {
 }
-            ).addTo(feature_group_ca2b0991314f9c3ae0c70e6bed236ac9);
+            ).addTo(feature_group_0c0c23429eaa1562d4586fa25bfecac4);
         
     
-            var div_icon_17791f9972a41b8b8573f0052772e1f7 = L.divIcon({
-  "html": "\n            \u003cdiv style=\"transform: translate(-50%, -50%);\"\u003e\n              \u003cdiv style=\"\n                  width:8px;\n                  height:8px;\n                  background:#1a7f37;\n                  opacity:0.4;\n              \"\u003e\u003c/div\u003e\n            \u003c/div\u003e\n            ",
+            var div_icon_baac4a43963f66f4fa26479ef2939de9 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#1a7f37;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
   "iconSize": [8, 8],
   "iconAnchor": [4, 4],
   "popupAnchor": [0, -4],
@@ -1073,35 +1071,35 @@
 });
         
     
-        var popup_a99eaef3521dc0491daaccd2ff4ccd8f = L.popup({
+        var popup_fd5689e4cfcd30a2ba3c659b5f6754dc = L.popup({
   "maxWidth": 220,
 });
 
         
             
-                var html_cd2a1400b61b2c0671d4029bc852a4f3 = $(`<div id="html_cd2a1400b61b2c0671d4029bc852a4f3" style="width: 100.0%; height: 100.0%;"><a href="https://www.aki-kokubunji.com/" target="_blank" rel="noopener noreferrer">安芸国分寺</a></div>`)[0];
-                popup_a99eaef3521dc0491daaccd2ff4ccd8f.setContent(html_cd2a1400b61b2c0671d4029bc852a4f3);
+                var html_59f9ea6c358f4f0cd0ec8979f253a59e = $(`<div id="html_59f9ea6c358f4f0cd0ec8979f253a59e" style="width: 100.0%; height: 100.0%;"><a href="https://www.aki-kokubunji.com/" target="_blank" rel="noopener noreferrer">安芸国分寺</a></div>`)[0];
+                popup_fd5689e4cfcd30a2ba3c659b5f6754dc.setContent(html_59f9ea6c358f4f0cd0ec8979f253a59e);
             
         
 
-        marker_a14b813db927bb083e9554ae167a3ffb.bindPopup(popup_a99eaef3521dc0491daaccd2ff4ccd8f)
+        marker_9b37f5b29170fc7a7e9aca1b101edb18.bindPopup(popup_fd5689e4cfcd30a2ba3c659b5f6754dc)
         ;
 
         
     
     
-                marker_a14b813db927bb083e9554ae167a3ffb.setIcon(div_icon_17791f9972a41b8b8573f0052772e1f7);
+                marker_9b37f5b29170fc7a7e9aca1b101edb18.setIcon(div_icon_baac4a43963f66f4fa26479ef2939de9);
             
     
-            var marker_f2da2cb51b3ae48a257b3a90a55b2042 = L.marker(
+            var marker_a5947cb62861aaf4be13c9c1cca3b273 = L.marker(
                 [34.43311257243008, 132.74422920707238],
                 {
 }
-            ).addTo(feature_group_ca2b0991314f9c3ae0c70e6bed236ac9);
+            ).addTo(feature_group_0c0c23429eaa1562d4586fa25bfecac4);
         
     
-            var div_icon_ff78ab05bfeab85a8b0fb8ac2077e3d5 = L.divIcon({
-  "html": "\n            \u003cdiv style=\"transform: translate(-50%, -50%);\"\u003e\n              \u003cdiv style=\"\n                  width:8px;\n                  height:8px;\n                  background:#1a7f37;\n                  opacity:0.4;\n              \"\u003e\u003c/div\u003e\n            \u003c/div\u003e\n            ",
+            var div_icon_846e76a84117789d0130c37609280422 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#1a7f37;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
   "iconSize": [8, 8],
   "iconAnchor": [4, 4],
   "popupAnchor": [0, -4],
@@ -1109,35 +1107,35 @@
 });
         
     
-        var popup_2a54f995c7438d0ae2cc167302f7de6d = L.popup({
+        var popup_869aae6fece6c87d0444bdcf9ab6f029 = L.popup({
   "maxWidth": 220,
 });
 
         
             
-                var html_d3d907ccf72fec71784a925c9d90cafb = $(`<div id="html_d3d907ccf72fec71784a925c9d90cafb" style="width: 100.0%; height: 100.0%;"><a href="https://mitate.or.jp/" target="_blank" rel="noopener noreferrer">御建神社</a></div>`)[0];
-                popup_2a54f995c7438d0ae2cc167302f7de6d.setContent(html_d3d907ccf72fec71784a925c9d90cafb);
+                var html_b9c0fdaa4bde91f9be87a394ef170801 = $(`<div id="html_b9c0fdaa4bde91f9be87a394ef170801" style="width: 100.0%; height: 100.0%;"><a href="https://mitate.or.jp/" target="_blank" rel="noopener noreferrer">御建神社</a></div>`)[0];
+                popup_869aae6fece6c87d0444bdcf9ab6f029.setContent(html_b9c0fdaa4bde91f9be87a394ef170801);
             
         
 
-        marker_f2da2cb51b3ae48a257b3a90a55b2042.bindPopup(popup_2a54f995c7438d0ae2cc167302f7de6d)
+        marker_a5947cb62861aaf4be13c9c1cca3b273.bindPopup(popup_869aae6fece6c87d0444bdcf9ab6f029)
         ;
 
         
     
     
-                marker_f2da2cb51b3ae48a257b3a90a55b2042.setIcon(div_icon_ff78ab05bfeab85a8b0fb8ac2077e3d5);
+                marker_a5947cb62861aaf4be13c9c1cca3b273.setIcon(div_icon_846e76a84117789d0130c37609280422);
             
     
-            var marker_5d69b470ac982cd5d2d52a7f319bf2f2 = L.marker(
+            var marker_9bb06fc17384f27af3fade7385a28a0f = L.marker(
                 [34.462340947420024, 132.87621398704022],
                 {
 }
-            ).addTo(feature_group_ca2b0991314f9c3ae0c70e6bed236ac9);
+            ).addTo(feature_group_0c0c23429eaa1562d4586fa25bfecac4);
         
     
-            var div_icon_abf308eca16b277849728f025980e8bf = L.divIcon({
-  "html": "\n            \u003cdiv style=\"transform: translate(-50%, -50%);\"\u003e\n              \u003cdiv style=\"\n                  width:8px;\n                  height:8px;\n                  background:#1a7f37;\n                  opacity:0.4;\n              \"\u003e\u003c/div\u003e\n            \u003c/div\u003e\n            ",
+            var div_icon_b5d14eb5fa6d793f0b77d5c7d863c023 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#1a7f37;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
   "iconSize": [8, 8],
   "iconAnchor": [4, 4],
   "popupAnchor": [0, -4],
@@ -1145,35 +1143,35 @@
 });
         
     
-        var popup_5e12dd90181d71c3b0a3646b9f312ec5 = L.popup({
+        var popup_f1bd832e2545fa254d2eb2713262fe9e = L.popup({
   "maxWidth": 220,
 });
 
         
             
-                var html_83943ec4f0089af997e662ec5374188a = $(`<div id="html_83943ec4f0089af997e662ec5374188a" style="width: 100.0%; height: 100.0%;">竹林寺</div>`)[0];
-                popup_5e12dd90181d71c3b0a3646b9f312ec5.setContent(html_83943ec4f0089af997e662ec5374188a);
+                var html_455186ef120e6a66a29dda0f3162824d = $(`<div id="html_455186ef120e6a66a29dda0f3162824d" style="width: 100.0%; height: 100.0%;">竹林寺</div>`)[0];
+                popup_f1bd832e2545fa254d2eb2713262fe9e.setContent(html_455186ef120e6a66a29dda0f3162824d);
             
         
 
-        marker_5d69b470ac982cd5d2d52a7f319bf2f2.bindPopup(popup_5e12dd90181d71c3b0a3646b9f312ec5)
+        marker_9bb06fc17384f27af3fade7385a28a0f.bindPopup(popup_f1bd832e2545fa254d2eb2713262fe9e)
         ;
 
         
     
     
-                marker_5d69b470ac982cd5d2d52a7f319bf2f2.setIcon(div_icon_abf308eca16b277849728f025980e8bf);
+                marker_9bb06fc17384f27af3fade7385a28a0f.setIcon(div_icon_b5d14eb5fa6d793f0b77d5c7d863c023);
             
     
-            var marker_5892145b3623803bbb9b28c540954a50 = L.marker(
+            var marker_389f7dabf317ac98eaa0584ab6775c74 = L.marker(
                 [34.31824623391472, 132.81147931289618],
                 {
 }
-            ).addTo(feature_group_ca2b0991314f9c3ae0c70e6bed236ac9);
+            ).addTo(feature_group_0c0c23429eaa1562d4586fa25bfecac4);
         
     
-            var div_icon_0edfafe4d87b8c6fb53ad45e850fd426 = L.divIcon({
-  "html": "\n            \u003cdiv style=\"transform: translate(-50%, -50%);\"\u003e\n              \u003cdiv style=\"\n                  width:8px;\n                  height:8px;\n                  background:#1a7f37;\n                  opacity:0.4;\n              \"\u003e\u003c/div\u003e\n            \u003c/div\u003e\n            ",
+            var div_icon_a141c49d36a0fbd3661a0ce148d3f181 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#1a7f37;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
   "iconSize": [8, 8],
   "iconAnchor": [4, 4],
   "popupAnchor": [0, -4],
@@ -1181,35 +1179,35 @@
 });
         
     
-        var popup_e4fe44a4eb6eee19215c5ad100150cb5 = L.popup({
+        var popup_6975899c5631b0b8c237645d2474b008 = L.popup({
   "maxWidth": 220,
 });
 
         
             
-                var html_123f93dc9b0b1fa8385036d591188a19 = $(`<div id="html_123f93dc9b0b1fa8385036d591188a19" style="width: 100.0%; height: 100.0%;"><a href="https://higashihiroshima-kanko.jp/spot/sakakiya-mahachiman/" target="_blank" rel="noopener noreferrer">榊山八幡神社</a></div>`)[0];
-                popup_e4fe44a4eb6eee19215c5ad100150cb5.setContent(html_123f93dc9b0b1fa8385036d591188a19);
+                var html_bdd0784a1b53555ade5f28a271a099ee = $(`<div id="html_bdd0784a1b53555ade5f28a271a099ee" style="width: 100.0%; height: 100.0%;"><a href="https://higashihiroshima-kanko.jp/spot/sakakiya-mahachiman/" target="_blank" rel="noopener noreferrer">榊山八幡神社</a></div>`)[0];
+                popup_6975899c5631b0b8c237645d2474b008.setContent(html_bdd0784a1b53555ade5f28a271a099ee);
             
         
 
-        marker_5892145b3623803bbb9b28c540954a50.bindPopup(popup_e4fe44a4eb6eee19215c5ad100150cb5)
+        marker_389f7dabf317ac98eaa0584ab6775c74.bindPopup(popup_6975899c5631b0b8c237645d2474b008)
         ;
 
         
     
     
-                marker_5892145b3623803bbb9b28c540954a50.setIcon(div_icon_0edfafe4d87b8c6fb53ad45e850fd426);
+                marker_389f7dabf317ac98eaa0584ab6775c74.setIcon(div_icon_a141c49d36a0fbd3661a0ce148d3f181);
             
     
-            var marker_38cc54c031eb911430d12506df239487 = L.marker(
+            var marker_2e39bcb571431e9fc1e9a0f8615c0741 = L.marker(
                 [34.31601541670344, 132.79575521973842],
                 {
 }
-            ).addTo(feature_group_ca2b0991314f9c3ae0c70e6bed236ac9);
+            ).addTo(feature_group_0c0c23429eaa1562d4586fa25bfecac4);
         
     
-            var div_icon_d65b723beffda5526c6b7c41b1779b99 = L.divIcon({
-  "html": "\n            \u003cdiv style=\"transform: translate(-50%, -50%);\"\u003e\n              \u003cdiv style=\"\n                  width:8px;\n                  height:8px;\n                  background:#1a7f37;\n                  opacity:0.4;\n              \"\u003e\u003c/div\u003e\n            \u003c/div\u003e\n            ",
+            var div_icon_89c48ce1b20fe801e4679b641396980b = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#1a7f37;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
   "iconSize": [8, 8],
   "iconAnchor": [4, 4],
   "popupAnchor": [0, -4],
@@ -1217,24 +1215,2493 @@
 });
         
     
-        var popup_24b5e31cd13e9b0c865a434ceb4b2f0b = L.popup({
+        var popup_b131b57d0d7c9f30f4cd61ba155dfef0 = L.popup({
   "maxWidth": 220,
 });
 
         
             
-                var html_70a553c829e6297333a12ccd59e6cb64 = $(`<div id="html_70a553c829e6297333a12ccd59e6cb64" style="width: 100.0%; height: 100.0%;"><a href="https://www.noritoyama.com/index.html" target="_blank" rel="noopener noreferrer">祝詞山八幡神社</a></div>`)[0];
-                popup_24b5e31cd13e9b0c865a434ceb4b2f0b.setContent(html_70a553c829e6297333a12ccd59e6cb64);
+                var html_f7d02bbab931a3e5a719cb00289b2b83 = $(`<div id="html_f7d02bbab931a3e5a719cb00289b2b83" style="width: 100.0%; height: 100.0%;"><a href="https://www.noritoyama.com/index.html" target="_blank" rel="noopener noreferrer">祝詞山八幡神社</a></div>`)[0];
+                popup_b131b57d0d7c9f30f4cd61ba155dfef0.setContent(html_f7d02bbab931a3e5a719cb00289b2b83);
             
         
 
-        marker_38cc54c031eb911430d12506df239487.bindPopup(popup_24b5e31cd13e9b0c865a434ceb4b2f0b)
+        marker_2e39bcb571431e9fc1e9a0f8615c0741.bindPopup(popup_b131b57d0d7c9f30f4cd61ba155dfef0)
         ;
 
         
     
     
-                marker_38cc54c031eb911430d12506df239487.setIcon(div_icon_d65b723beffda5526c6b7c41b1779b99);
+                marker_2e39bcb571431e9fc1e9a0f8615c0741.setIcon(div_icon_89c48ce1b20fe801e4679b641396980b);
             
+    
+            var feature_group_bbb8d627ced9c59f07fe3eca5934d93f = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var marker_9edb7ec09ff899b3f76440b2122b587e = L.marker(
+                [34.34010854410199, 134.0439619344125],
+                {
+}
+            ).addTo(feature_group_bbb8d627ced9c59f07fe3eca5934d93f);
+        
+    
+            var div_icon_fc4a81c30421fd9a559f7471de4ec37d = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#f2c300;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_adbbd4cc945d4fda4016e975a224c557 = L.popup({
+  "maxWidth": 280,
+});
+
+        
+            
+                var html_f768da168152cbcab135b064cfc7b1f0 = $(`<div id="html_f768da168152cbcab135b064cfc7b1f0" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div><a href="https://bunka.nii.ac.jp/heritages/detail/586816" target="_blank" rel="noopener noreferrer">香川県庁舎東館 <br><span style="font-size:11px; color:rgba(0,0,0,0.6);">&nbsp;&nbsp;&nbsp;(丹下健三)</span></a></div>            </div>     </div>`)[0];
+                popup_adbbd4cc945d4fda4016e975a224c557.setContent(html_f768da168152cbcab135b064cfc7b1f0);
+            
+        
+
+        marker_9edb7ec09ff899b3f76440b2122b587e.bindPopup(popup_adbbd4cc945d4fda4016e975a224c557)
+        ;
+
+        
+    
+    
+                marker_9edb7ec09ff899b3f76440b2122b587e.setIcon(div_icon_fc4a81c30421fd9a559f7471de4ec37d);
+            
+    
+            var marker_dac9b30e3500f0766180db5c7e21b9f2 = L.marker(
+                [34.37839453351106, 133.93099392642674],
+                {
+}
+            ).addTo(feature_group_bbb8d627ced9c59f07fe3eca5934d93f);
+        
+    
+            var div_icon_ef14800c6b4bc7efcf26ceec85e1b3cd = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#f2c300;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_14d262457e61702eb7d1d4f068d44d53 = L.popup({
+  "maxWidth": 280,
+});
+
+        
+            
+                var html_39d79f2572e807e74591bda232bd4a3c = $(`<div id="html_39d79f2572e807e74591bda232bd4a3c" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div><a href="https://bunka.nii.ac.jp/heritages/detail/608316" target="_blank" rel="noopener noreferrer">瀬戸内海歴史民俗資料館 <br><span style="font-size:11px; color:rgba(0,0,0,0.6);">&nbsp;&nbsp;&nbsp;(山本忠司)</span></a></div>            </div>     </div>`)[0];
+                popup_14d262457e61702eb7d1d4f068d44d53.setContent(html_39d79f2572e807e74591bda232bd4a3c);
+            
+        
+
+        marker_dac9b30e3500f0766180db5c7e21b9f2.bindPopup(popup_14d262457e61702eb7d1d4f068d44d53)
+        ;
+
+        
+    
+    
+                marker_dac9b30e3500f0766180db5c7e21b9f2.setIcon(div_icon_ef14800c6b4bc7efcf26ceec85e1b3cd);
+            
+    
+            var marker_a4077866ee36d6df603c3e11c5ec8740 = L.marker(
+                [34.47308831066627, 133.805204745781],
+                {
+}
+            ).addTo(feature_group_bbb8d627ced9c59f07fe3eca5934d93f);
+        
+    
+            var div_icon_f4fae2e042481dc3cf95ef56dd425526 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#f2c300;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_7c5dfac0a2184acdf3444eae47a23f4d = L.popup({
+  "maxWidth": 280,
+});
+
+        
+            
+                var html_98e029e62e2488b4fd626b6b66210b59 = $(`<div id="html_98e029e62e2488b4fd626b6b66210b59" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div><a href="https://www.nozakike.or.jp/" target="_blank" rel="noopener noreferrer">旧野崎家住宅</a></div>            </div>     </div>`)[0];
+                popup_7c5dfac0a2184acdf3444eae47a23f4d.setContent(html_98e029e62e2488b4fd626b6b66210b59);
+            
+        
+
+        marker_a4077866ee36d6df603c3e11c5ec8740.bindPopup(popup_7c5dfac0a2184acdf3444eae47a23f4d)
+        ;
+
+        
+    
+    
+                marker_a4077866ee36d6df603c3e11c5ec8740.setIcon(div_icon_f4fae2e042481dc3cf95ef56dd425526);
+            
+    
+            var marker_0ddeff18f5a8c4687460c1316165c01d = L.marker(
+                [34.59490450988425, 133.7745365687609],
+                {
+}
+            ).addTo(feature_group_bbb8d627ced9c59f07fe3eca5934d93f);
+        
+    
+            var div_icon_b71aa12bb89cb94636dc414f26207363 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#f2c300;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_b8f56576856466cee122c44a04344f02 = L.popup({
+  "maxWidth": 280,
+});
+
+        
+            
+                var html_bb71e8c20579d2b2b9aacb0d84c9314b = $(`<div id="html_bb71e8c20579d2b2b9aacb0d84c9314b" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div><a href="https://www.urabesekkei.jp/projects/157/" target="_blank" rel="noopener noreferrer">倉敷アイビースクエア <br><span style="font-size:11px; color:rgba(0,0,0,0.6);">&nbsp;&nbsp;&nbsp;(設計：石川正龍・島田覚人 改修：浦辺鎮太郎)</span></a></div>            </div>     </div>`)[0];
+                popup_b8f56576856466cee122c44a04344f02.setContent(html_bb71e8c20579d2b2b9aacb0d84c9314b);
+            
+        
+
+        marker_0ddeff18f5a8c4687460c1316165c01d.bindPopup(popup_b8f56576856466cee122c44a04344f02)
+        ;
+
+        
+    
+    
+                marker_0ddeff18f5a8c4687460c1316165c01d.setIcon(div_icon_b71aa12bb89cb94636dc414f26207363);
+            
+    
+            var marker_4e07acd5e57aee034ef244439f5cc640 = L.marker(
+                [34.56310976637502, 134.1061507895152],
+                {
+}
+            ).addTo(feature_group_bbb8d627ced9c59f07fe3eca5934d93f);
+        
+    
+            var div_icon_c973439684e208843880ac471919402c = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#f2c300;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_2228ae7ab0155468c77950e3b395c18d = L.popup({
+  "maxWidth": 280,
+});
+
+        
+            
+                var html_c3dc53319727c13d351aca21089d9d1a = $(`<div id="html_c3dc53319727c13d351aca21089d9d1a" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>犬島製錬所 <br><span style="font-size:11px; color:rgba(0,0,0,0.6);">&nbsp;&nbsp;&nbsp;(武藤与一・池田謙三)</span></div>            </div>     </div>`)[0];
+                popup_2228ae7ab0155468c77950e3b395c18d.setContent(html_c3dc53319727c13d351aca21089d9d1a);
+            
+        
+
+        marker_4e07acd5e57aee034ef244439f5cc640.bindPopup(popup_2228ae7ab0155468c77950e3b395c18d)
+        ;
+
+        
+    
+    
+                marker_4e07acd5e57aee034ef244439f5cc640.setIcon(div_icon_c973439684e208843880ac471919402c);
+            
+    
+            var marker_4e7748c1eb1010ab162d1e931c95602c = L.marker(
+                [34.56402994038319, 134.10698562955568],
+                {
+}
+            ).addTo(feature_group_bbb8d627ced9c59f07fe3eca5934d93f);
+        
+    
+            var div_icon_94d85ccd8a0b01a7ea0b0c3555409c13 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#f2c300;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_0d4c36c32e718c32df2222aa3e243a0d = L.popup({
+  "maxWidth": 280,
+});
+
+        
+            
+                var html_7e303fffce149420036a40b732cecc5a = $(`<div id="html_7e303fffce149420036a40b732cecc5a" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div><a href="https://benesse-artsite.jp/art/seirensho.html" target="_blank" rel="noopener noreferrer">犬島製錬所美術館 <br><span style="font-size:11px; color:rgba(0,0,0,0.6);">&nbsp;&nbsp;&nbsp;(三分一博志)</span></a></div>            </div>     </div>`)[0];
+                popup_0d4c36c32e718c32df2222aa3e243a0d.setContent(html_7e303fffce149420036a40b732cecc5a);
+            
+        
+
+        marker_4e7748c1eb1010ab162d1e931c95602c.bindPopup(popup_0d4c36c32e718c32df2222aa3e243a0d)
+        ;
+
+        
+    
+    
+                marker_4e7748c1eb1010ab162d1e931c95602c.setIcon(div_icon_94d85ccd8a0b01a7ea0b0c3555409c13);
+            
+    
+            var marker_c2df26c018fda1531a1b2673644e26c9 = L.marker(
+                [33.50637125405658, 132.55009203025483],
+                {
+}
+            ).addTo(feature_group_bbb8d627ced9c59f07fe3eca5934d93f);
+        
+    
+            var div_icon_32c3e5e2165cb2b258ba5ddc2a654dae = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#f2c300;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_46b9d90b714821603041ef541511d4a1 = L.popup({
+  "maxWidth": 280,
+});
+
+        
+            
+                var html_7aa7a75123da5e3573eef9d7e43296f3 = $(`<div id="html_7aa7a75123da5e3573eef9d7e43296f3" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div><a href="https://www.garyusanso.jp/" target="_blank" rel="noopener noreferrer">臥龍山荘 <br><span style="font-size:11px; color:rgba(0,0,0,0.6);">&nbsp;&nbsp;&nbsp;(棟梁：中野寅雄 設計：草木國太郎)</span></a></div>            </div>     </div>`)[0];
+                popup_46b9d90b714821603041ef541511d4a1.setContent(html_7aa7a75123da5e3573eef9d7e43296f3);
+            
+        
+
+        marker_c2df26c018fda1531a1b2673644e26c9.bindPopup(popup_46b9d90b714821603041ef541511d4a1)
+        ;
+
+        
+    
+    
+                marker_c2df26c018fda1531a1b2673644e26c9.setIcon(div_icon_32c3e5e2165cb2b258ba5ddc2a654dae);
+            
+    
+            var marker_8ceed8a0c4f62d78a596dbdd5842d90b = L.marker(
+                [34.39568659144355, 132.45372074361467],
+                {
+}
+            ).addTo(feature_group_bbb8d627ced9c59f07fe3eca5934d93f);
+        
+    
+            var div_icon_8732db6aa35a845ddcbbe8e8275102a4 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#f2c300;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_41986d2ead27faca8d035c360b10f5c1 = L.popup({
+  "maxWidth": 280,
+});
+
+        
+            
+                var html_07779ab0a4483037f7a7560027f27c26 = $(`<div id="html_07779ab0a4483037f7a7560027f27c26" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div><a href="https://bunka.nii.ac.jp/heritages/detail/206313" target="_blank" rel="noopener noreferrer">原爆ドーム(広島産業奨励館)</a></div>            </div>     </div>`)[0];
+                popup_41986d2ead27faca8d035c360b10f5c1.setContent(html_07779ab0a4483037f7a7560027f27c26);
+            
+        
+
+        marker_8ceed8a0c4f62d78a596dbdd5842d90b.bindPopup(popup_41986d2ead27faca8d035c360b10f5c1)
+        ;
+
+        
+    
+    
+                marker_8ceed8a0c4f62d78a596dbdd5842d90b.setIcon(div_icon_8732db6aa35a845ddcbbe8e8275102a4);
+            
+    
+            var marker_5cdbe7c24cfaf7c55e2c2495821858c5 = L.marker(
+                [34.39162850923988, 132.45309171476268],
+                {
+}
+            ).addTo(feature_group_bbb8d627ced9c59f07fe3eca5934d93f);
+        
+    
+            var div_icon_330eafa0628cf3b1c51c10820a212ae0 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:8px;\n              height:8px;\n              background:#f2c300;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [8, 8],
+  "iconAnchor": [4, 4],
+  "popupAnchor": [0, -4],
+  "className": "empty",
+});
+        
+    
+        var popup_31620eb090c211b220df55bb26807081 = L.popup({
+  "maxWidth": 280,
+});
+
+        
+            
+                var html_6ea5aae4c154fd95b879105cd1601107 = $(`<div id="html_6ea5aae4c154fd95b879105cd1601107" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div><a href="https://bunka.nii.ac.jp/heritages/detail/149261" target="_blank" rel="noopener noreferrer">広島平和記念資料館 <br><span style="font-size:11px; color:rgba(0,0,0,0.6);">&nbsp;&nbsp;&nbsp;(丹下健三)</span></a></div>            </div>     </div>`)[0];
+                popup_31620eb090c211b220df55bb26807081.setContent(html_6ea5aae4c154fd95b879105cd1601107);
+            
+        
+
+        marker_5cdbe7c24cfaf7c55e2c2495821858c5.bindPopup(popup_31620eb090c211b220df55bb26807081)
+        ;
+
+        
+    
+    
+                marker_5cdbe7c24cfaf7c55e2c2495821858c5.setIcon(div_icon_330eafa0628cf3b1c51c10820a212ae0);
+            
+    
+            var feature_group_05d2cb96d1a1b4526e373e873eee7721 = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var marker_34e6e71e7dd8270ad3d9698651358bfd = L.marker(
+                [34.27422076346034, 132.80172378912195],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_768500dcfa4f775f0eec70b7acbb295d = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_2c334a77769079ba444d69916dfcec45 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_bd51ec153530941a4fae07085ecd29c6 = $(`<div id="html_bd51ec153530941a4fae07085ecd29c6" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>大芝島</div>            </div>     </div>`)[0];
+                popup_2c334a77769079ba444d69916dfcec45.setContent(html_bd51ec153530941a4fae07085ecd29c6);
+            
+        
+
+        marker_34e6e71e7dd8270ad3d9698651358bfd.bindPopup(popup_2c334a77769079ba444d69916dfcec45)
+        ;
+
+        
+    
+    
+                marker_34e6e71e7dd8270ad3d9698651358bfd.setIcon(div_icon_768500dcfa4f775f0eec70b7acbb295d);
+            
+    
+            var marker_c6b7db9f4db2e418050d3427c5104a82 = L.marker(
+                [34.26485413169861, 132.79890907010295],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_f5e35bdc87178c57f055f24080d83743 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_526c044563717474321b75b6266d53fd = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_a6da235759723fbf393e1e2906fa8fc4 = $(`<div id="html_a6da235759723fbf393e1e2906fa8fc4" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>小芝島</div>            </div>     </div>`)[0];
+                popup_526c044563717474321b75b6266d53fd.setContent(html_a6da235759723fbf393e1e2906fa8fc4);
+            
+        
+
+        marker_c6b7db9f4db2e418050d3427c5104a82.bindPopup(popup_526c044563717474321b75b6266d53fd)
+        ;
+
+        
+    
+    
+                marker_c6b7db9f4db2e418050d3427c5104a82.setIcon(div_icon_f5e35bdc87178c57f055f24080d83743);
+            
+    
+            var marker_e35f9719bbf57cb46010d37684900742 = L.marker(
+                [34.294332066920994, 132.80441469979218],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_f768ada6b820bde317516c6dab660013 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_edfad570fdf5e4265ae22140b0aa7ae0 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_177b0d65a009c3a154f66811b97ced78 = $(`<div id="html_177b0d65a009c3a154f66811b97ced78" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>龍王島</div>            </div>     </div>`)[0];
+                popup_edfad570fdf5e4265ae22140b0aa7ae0.setContent(html_177b0d65a009c3a154f66811b97ced78);
+            
+        
+
+        marker_e35f9719bbf57cb46010d37684900742.bindPopup(popup_edfad570fdf5e4265ae22140b0aa7ae0)
+        ;
+
+        
+    
+    
+                marker_e35f9719bbf57cb46010d37684900742.setIcon(div_icon_f768ada6b820bde317516c6dab660013);
+            
+    
+            var marker_9996aa0797a2b18ee24f2c73767a29b6 = L.marker(
+                [34.28865506403815, 132.8158965010435],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_51772d0370cfdf5bb1396472fe1748a2 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_af574fda6c345679c1008119c1b179ac = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_bf5b95f9d704ae1fcc5a28e5f11114b6 = $(`<div id="html_bf5b95f9d704ae1fcc5a28e5f11114b6" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>藍之島</div>            </div>     </div>`)[0];
+                popup_af574fda6c345679c1008119c1b179ac.setContent(html_bf5b95f9d704ae1fcc5a28e5f11114b6);
+            
+        
+
+        marker_9996aa0797a2b18ee24f2c73767a29b6.bindPopup(popup_af574fda6c345679c1008119c1b179ac)
+        ;
+
+        
+    
+    
+                marker_9996aa0797a2b18ee24f2c73767a29b6.setIcon(div_icon_51772d0370cfdf5bb1396472fe1748a2);
+            
+    
+            var marker_8747f2f0b281896a2eb88db89d65e0c7 = L.marker(
+                [34.186411920954534, 132.66643891459034],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_61ff34c6fd410298f8aa25c3e2069d29 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_24a9062ff04cf5d556108476f8976198 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_b320273ba4893055d037ddc5fff0a54a = $(`<div id="html_b320273ba4893055d037ddc5fff0a54a" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>下蒲刈島</div>            </div>     </div>`)[0];
+                popup_24a9062ff04cf5d556108476f8976198.setContent(html_b320273ba4893055d037ddc5fff0a54a);
+            
+        
+
+        marker_8747f2f0b281896a2eb88db89d65e0c7.bindPopup(popup_24a9062ff04cf5d556108476f8976198)
+        ;
+
+        
+    
+    
+                marker_8747f2f0b281896a2eb88db89d65e0c7.setIcon(div_icon_61ff34c6fd410298f8aa25c3e2069d29);
+            
+    
+            var marker_d11f609d661ef96d3743919aaa1aaac1 = L.marker(
+                [34.18511868390856, 132.72947738045187],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_040bcfd619e47df1b0a9d2b305158e86 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_3fbd4390d34a0b0315379b82e4da210d = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_b883a724a239d865b35891dd325f978d = $(`<div id="html_b883a724a239d865b35891dd325f978d" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>上蒲刈島</div>            </div>     </div>`)[0];
+                popup_3fbd4390d34a0b0315379b82e4da210d.setContent(html_b883a724a239d865b35891dd325f978d);
+            
+        
+
+        marker_d11f609d661ef96d3743919aaa1aaac1.bindPopup(popup_3fbd4390d34a0b0315379b82e4da210d)
+        ;
+
+        
+    
+    
+                marker_d11f609d661ef96d3743919aaa1aaac1.setIcon(div_icon_040bcfd619e47df1b0a9d2b305158e86);
+            
+    
+            var marker_35d08a2dd4fd4c548ae9a1a5aba7461d = L.marker(
+                [34.15403232808218, 132.6538893371698],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_fa5a820859c97743060ba17b218e60f3 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_994a48f1245a1812e8a7a649457c591a = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_33f40dcac8952a089e7e6c366b83d795 = $(`<div id="html_33f40dcac8952a089e7e6c366b83d795" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>下黒島</div>            </div>     </div>`)[0];
+                popup_994a48f1245a1812e8a7a649457c591a.setContent(html_33f40dcac8952a089e7e6c366b83d795);
+            
+        
+
+        marker_35d08a2dd4fd4c548ae9a1a5aba7461d.bindPopup(popup_994a48f1245a1812e8a7a649457c591a)
+        ;
+
+        
+    
+    
+                marker_35d08a2dd4fd4c548ae9a1a5aba7461d.setIcon(div_icon_fa5a820859c97743060ba17b218e60f3);
+            
+    
+            var marker_2316d9ea355cb255c29362743f217154 = L.marker(
+                [34.154267648646055, 132.66978533737998],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_709b8ee5467920e8126a3704e323bc63 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_374f3be33dcb36f76f88dd62e6a45c97 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_090e25a720b0305fd67122d6eabd83f3 = $(`<div id="html_090e25a720b0305fd67122d6eabd83f3" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>上黒島</div>            </div>     </div>`)[0];
+                popup_374f3be33dcb36f76f88dd62e6a45c97.setContent(html_090e25a720b0305fd67122d6eabd83f3);
+            
+        
+
+        marker_2316d9ea355cb255c29362743f217154.bindPopup(popup_374f3be33dcb36f76f88dd62e6a45c97)
+        ;
+
+        
+    
+    
+                marker_2316d9ea355cb255c29362743f217154.setIcon(div_icon_709b8ee5467920e8126a3704e323bc63);
+            
+    
+            var marker_d543f0073c08ae78683253ba20464582 = L.marker(
+                [34.17330946917491, 132.78321988510754],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_f0dfaa26120ea14b94a5a701a0dc28fc = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_4169c8de31ec46d947605cc7c56ebec4 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_0a3152fbbf77459313124c9c4e4738bd = $(`<div id="html_0a3152fbbf77459313124c9c4e4738bd" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>豊島</div>            </div>     </div>`)[0];
+                popup_4169c8de31ec46d947605cc7c56ebec4.setContent(html_0a3152fbbf77459313124c9c4e4738bd);
+            
+        
+
+        marker_d543f0073c08ae78683253ba20464582.bindPopup(popup_4169c8de31ec46d947605cc7c56ebec4)
+        ;
+
+        
+    
+    
+                marker_d543f0073c08ae78683253ba20464582.setIcon(div_icon_f0dfaa26120ea14b94a5a701a0dc28fc);
+            
+    
+            var marker_a52d1712854f84ab7620ae0b72a1a706 = L.marker(
+                [34.152716876391146, 132.76628185762303],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_00596d8ff7856df46b9b9b4e3d65a85e = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_8b84534fc8e7ee46ef9c38ad00bcb08f = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_82391ec49155b77049edefb7ec42e202 = $(`<div id="html_82391ec49155b77049edefb7ec42e202" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>尾久比島</div>            </div>     </div>`)[0];
+                popup_8b84534fc8e7ee46ef9c38ad00bcb08f.setContent(html_82391ec49155b77049edefb7ec42e202);
+            
+        
+
+        marker_a52d1712854f84ab7620ae0b72a1a706.bindPopup(popup_8b84534fc8e7ee46ef9c38ad00bcb08f)
+        ;
+
+        
+    
+    
+                marker_a52d1712854f84ab7620ae0b72a1a706.setIcon(div_icon_00596d8ff7856df46b9b9b4e3d65a85e);
+            
+    
+            var marker_31411457284769aaf666df803be6997d = L.marker(
+                [34.11748803567222, 132.7927258776007],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_caf119a195df13d09466d4470b530ad6 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_0f241ffa63b975a8b56d529758ba124e = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_b1c4d067defb9b0c025ea25248ba6495 = $(`<div id="html_b1c4d067defb9b0c025ea25248ba6495" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>斎島</div>            </div>     </div>`)[0];
+                popup_0f241ffa63b975a8b56d529758ba124e.setContent(html_b1c4d067defb9b0c025ea25248ba6495);
+            
+        
+
+        marker_31411457284769aaf666df803be6997d.bindPopup(popup_0f241ffa63b975a8b56d529758ba124e)
+        ;
+
+        
+    
+    
+                marker_31411457284769aaf666df803be6997d.setIcon(div_icon_caf119a195df13d09466d4470b530ad6);
+            
+    
+            var marker_f444802abce557dc3a5d8b7ed9083fd5 = L.marker(
+                [34.17227593943227, 132.83101683810156],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_5f4004d6272d6fa3340dfabfd0bd3d45 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_4aad2bc1827a3862f0c6aaa4936f3cda = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_28c91b018999829a2980188d83613c3f = $(`<div id="html_28c91b018999829a2980188d83613c3f" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>大崎下島</div>            </div>     </div>`)[0];
+                popup_4aad2bc1827a3862f0c6aaa4936f3cda.setContent(html_28c91b018999829a2980188d83613c3f);
+            
+        
+
+        marker_f444802abce557dc3a5d8b7ed9083fd5.bindPopup(popup_4aad2bc1827a3862f0c6aaa4936f3cda)
+        ;
+
+        
+    
+    
+                marker_f444802abce557dc3a5d8b7ed9083fd5.setIcon(div_icon_5f4004d6272d6fa3340dfabfd0bd3d45);
+            
+    
+            var marker_a76ee81f6c40661e8da861afcc561994 = L.marker(
+                [34.193188615702304, 132.81658950347634],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_8d0888306874aa663d01ffac1158b3a8 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_ea317f53ff46e791d9dd274276bb1982 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_c58f3aff87f5969c51b46b7eb27c2682 = $(`<div id="html_c58f3aff87f5969c51b46b7eb27c2682" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>三角島</div>            </div>     </div>`)[0];
+                popup_ea317f53ff46e791d9dd274276bb1982.setContent(html_c58f3aff87f5969c51b46b7eb27c2682);
+            
+        
+
+        marker_a76ee81f6c40661e8da861afcc561994.bindPopup(popup_ea317f53ff46e791d9dd274276bb1982)
+        ;
+
+        
+    
+    
+                marker_a76ee81f6c40661e8da861afcc561994.setIcon(div_icon_8d0888306874aa663d01ffac1158b3a8);
+            
+    
+            var marker_e91bebe80905527ad3e5d8b623347c40 = L.marker(
+                [34.18689864496062, 132.8804018510081],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_82c13f38db80ba0cbc112d8b8805465b = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_5d112eb1735991fe05de5c63aac4a42a = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_a88ba60ddcd2392bd6754485f28ae808 = $(`<div id="html_a88ba60ddcd2392bd6754485f28ae808" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>岡村島</div>            </div>     </div>`)[0];
+                popup_5d112eb1735991fe05de5c63aac4a42a.setContent(html_a88ba60ddcd2392bd6754485f28ae808);
+            
+        
+
+        marker_e91bebe80905527ad3e5d8b623347c40.bindPopup(popup_5d112eb1735991fe05de5c63aac4a42a)
+        ;
+
+        
+    
+    
+                marker_e91bebe80905527ad3e5d8b623347c40.setIcon(div_icon_82c13f38db80ba0cbc112d8b8805465b);
+            
+    
+            var marker_f42fdf51d74e398e0c68df2241e583f7 = L.marker(
+                [34.18969421927232, 132.90181290695466],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_f64c0ed20d06a3f80f3c412365057d8b = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_e461567089b69ac00ec9fc17f84be8e9 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_c5a6c8427d240a6cbe5c090eca8bf99c = $(`<div id="html_c5a6c8427d240a6cbe5c090eca8bf99c" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>小大下島</div>            </div>     </div>`)[0];
+                popup_e461567089b69ac00ec9fc17f84be8e9.setContent(html_c5a6c8427d240a6cbe5c090eca8bf99c);
+            
+        
+
+        marker_f42fdf51d74e398e0c68df2241e583f7.bindPopup(popup_e461567089b69ac00ec9fc17f84be8e9)
+        ;
+
+        
+    
+    
+                marker_f42fdf51d74e398e0c68df2241e583f7.setIcon(div_icon_f64c0ed20d06a3f80f3c412365057d8b);
+            
+    
+            var marker_e8fe6ed9a7c8fcce4e8ae14fd8c7113c = L.marker(
+                [34.19148120073194, 132.9261479444472],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_cfe4d4ad44141f4814f1cc0127f60a63 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_19b6b178de7ef62ae7b455252b3c8715 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_d723530fc6e95013122fe45d33dcb243 = $(`<div id="html_d723530fc6e95013122fe45d33dcb243" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>大下島</div>            </div>     </div>`)[0];
+                popup_19b6b178de7ef62ae7b455252b3c8715.setContent(html_d723530fc6e95013122fe45d33dcb243);
+            
+        
+
+        marker_e8fe6ed9a7c8fcce4e8ae14fd8c7113c.bindPopup(popup_19b6b178de7ef62ae7b455252b3c8715)
+        ;
+
+        
+    
+    
+                marker_e8fe6ed9a7c8fcce4e8ae14fd8c7113c.setIcon(div_icon_cfe4d4ad44141f4814f1cc0127f60a63);
+            
+    
+            var marker_154d6a74c68eb652268a406d9383d9db = L.marker(
+                [34.24428093436227, 133.01583347172044],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_863597773000080251b96de4af5f40d2 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_6193d5e1e1c0f8f38755d880d31cd855 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_08b51279a1731f593339156393c26811 = $(`<div id="html_08b51279a1731f593339156393c26811" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>大三島</div>            </div>     </div>`)[0];
+                popup_6193d5e1e1c0f8f38755d880d31cd855.setContent(html_08b51279a1731f593339156393c26811);
+            
+        
+
+        marker_154d6a74c68eb652268a406d9383d9db.bindPopup(popup_6193d5e1e1c0f8f38755d880d31cd855)
+        ;
+
+        
+    
+    
+                marker_154d6a74c68eb652268a406d9383d9db.setIcon(div_icon_863597773000080251b96de4af5f40d2);
+            
+    
+            var marker_ccd4ffaa576761c87aca81cd92b8f162 = L.marker(
+                [34.23470148306081, 132.8921854569889],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_29d65506f505346f0ba3624843d6f826 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_957a31da63e1527e69f1ec1635c2fcab = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_4862c8705508b90a45a58c73a4590c22 = $(`<div id="html_4862c8705508b90a45a58c73a4590c22" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>大崎上島</div>            </div>     </div>`)[0];
+                popup_957a31da63e1527e69f1ec1635c2fcab.setContent(html_4862c8705508b90a45a58c73a4590c22);
+            
+        
+
+        marker_ccd4ffaa576761c87aca81cd92b8f162.bindPopup(popup_957a31da63e1527e69f1ec1635c2fcab)
+        ;
+
+        
+    
+    
+                marker_ccd4ffaa576761c87aca81cd92b8f162.setIcon(div_icon_29d65506f505346f0ba3624843d6f826);
+            
+    
+            var marker_bf8b41b9348dca049ba4f921c9c9ed09 = L.marker(
+                [34.262559584075, 132.87167143073276],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_aaa5709c8adb95cc147163b962e46605 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_7571f727661c4967b64344204be50f3c = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_bd8c2905b4cbd9efe98f0ee46c93949d = $(`<div id="html_bd8c2905b4cbd9efe98f0ee46c93949d" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>長島</div>            </div>     </div>`)[0];
+                popup_7571f727661c4967b64344204be50f3c.setContent(html_bd8c2905b4cbd9efe98f0ee46c93949d);
+            
+        
+
+        marker_bf8b41b9348dca049ba4f921c9c9ed09.bindPopup(popup_7571f727661c4967b64344204be50f3c)
+        ;
+
+        
+    
+    
+                marker_bf8b41b9348dca049ba4f921c9c9ed09.setIcon(div_icon_aaa5709c8adb95cc147163b962e46605);
+            
+    
+            var marker_86a6d76b442ac7ef116aa28077cff0e9 = L.marker(
+                [34.28164810612252, 132.88556793649232],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_75a2d8d76789a0963ebe3eeaac533525 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_db06d2c97031f87e37e5d23392aff37d = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_c83086358a314dc83cb5847ee2182946 = $(`<div id="html_c83086358a314dc83cb5847ee2182946" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>臼島</div>            </div>     </div>`)[0];
+                popup_db06d2c97031f87e37e5d23392aff37d.setContent(html_c83086358a314dc83cb5847ee2182946);
+            
+        
+
+        marker_86a6d76b442ac7ef116aa28077cff0e9.bindPopup(popup_db06d2c97031f87e37e5d23392aff37d)
+        ;
+
+        
+    
+    
+                marker_86a6d76b442ac7ef116aa28077cff0e9.setIcon(div_icon_75a2d8d76789a0963ebe3eeaac533525);
+            
+    
+            var marker_1135cceafcecf143c926d840ad3fd693 = L.marker(
+                [34.287171363138214, 132.8514830985598],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_078ba1ac3e68685184695af9d1c9c4a7 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_56bf02f3f7d82224b9be1ef6ea830181 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_6328be7677bf0abb8466f51c6ba2a68e = $(`<div id="html_6328be7677bf0abb8466f51c6ba2a68e" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>唐船島</div>            </div>     </div>`)[0];
+                popup_56bf02f3f7d82224b9be1ef6ea830181.setContent(html_6328be7677bf0abb8466f51c6ba2a68e);
+            
+        
+
+        marker_1135cceafcecf143c926d840ad3fd693.bindPopup(popup_56bf02f3f7d82224b9be1ef6ea830181)
+        ;
+
+        
+    
+    
+                marker_1135cceafcecf143c926d840ad3fd693.setIcon(div_icon_078ba1ac3e68685184695af9d1c9c4a7);
+            
+    
+            var marker_a2347c67dd56bbf0ba23d49d3963c9d8 = L.marker(
+                [34.318505342718474, 132.94383046122113],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_772bdf0c2ede198c02beff06a6750284 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_8d4b8eb6984ce8172809aa6a8d1f7f13 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_9b7ea59fecd988b6675c17d239fa973b = $(`<div id="html_9b7ea59fecd988b6675c17d239fa973b" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>阿波島</div>            </div>     </div>`)[0];
+                popup_8d4b8eb6984ce8172809aa6a8d1f7f13.setContent(html_9b7ea59fecd988b6675c17d239fa973b);
+            
+        
+
+        marker_a2347c67dd56bbf0ba23d49d3963c9d8.bindPopup(popup_8d4b8eb6984ce8172809aa6a8d1f7f13)
+        ;
+
+        
+    
+    
+                marker_a2347c67dd56bbf0ba23d49d3963c9d8.setIcon(div_icon_772bdf0c2ede198c02beff06a6750284);
+            
+    
+            var marker_bef2407904ef2ce0319dbc885452e878 = L.marker(
+                [34.30873505904607, 132.9940289822961],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_3fe81bce9228ca3e26440a79c378b8ac = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_15b9c15e183f2e3e404dea9be7e61c48 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_a47cedcc298c26fdaf9c3c4e50ecedb3 = $(`<div id="html_a47cedcc298c26fdaf9c3c4e50ecedb3" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>大久野島</div>            </div>     </div>`)[0];
+                popup_15b9c15e183f2e3e404dea9be7e61c48.setContent(html_a47cedcc298c26fdaf9c3c4e50ecedb3);
+            
+        
+
+        marker_bef2407904ef2ce0319dbc885452e878.bindPopup(popup_15b9c15e183f2e3e404dea9be7e61c48)
+        ;
+
+        
+    
+    
+                marker_bef2407904ef2ce0319dbc885452e878.setIcon(div_icon_3fe81bce9228ca3e26440a79c378b8ac);
+            
+    
+            var marker_7b33901009816ba2c4809f09317ffd93 = L.marker(
+                [34.28528191527532, 132.94006804420275],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_cbc17923ce9c86cadf97058927e83915 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_070ea18c7a817160e0e748b315bebc68 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_572b8412c84ac62a07f8e73387e667bd = $(`<div id="html_572b8412c84ac62a07f8e73387e667bd" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>佐組島</div>            </div>     </div>`)[0];
+                popup_070ea18c7a817160e0e748b315bebc68.setContent(html_572b8412c84ac62a07f8e73387e667bd);
+            
+        
+
+        marker_7b33901009816ba2c4809f09317ffd93.bindPopup(popup_070ea18c7a817160e0e748b315bebc68)
+        ;
+
+        
+    
+    
+                marker_7b33901009816ba2c4809f09317ffd93.setIcon(div_icon_cbc17923ce9c86cadf97058927e83915);
+            
+    
+            var marker_9c61cb9d43e10909f8e0d30e5ba53da9 = L.marker(
+                [34.214135853510776, 133.0933178160175],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_f754be9e34a6bccdb6fa37cbbb374c66 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_7075515158e3677474cdd6acab404229 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_7851d471aebe78fcdf2a623f79eb2ed3 = $(`<div id="html_7851d471aebe78fcdf2a623f79eb2ed3" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>伯方島</div>            </div>     </div>`)[0];
+                popup_7075515158e3677474cdd6acab404229.setContent(html_7851d471aebe78fcdf2a623f79eb2ed3);
+            
+        
+
+        marker_9c61cb9d43e10909f8e0d30e5ba53da9.bindPopup(popup_7075515158e3677474cdd6acab404229)
+        ;
+
+        
+    
+    
+                marker_9c61cb9d43e10909f8e0d30e5ba53da9.setIcon(div_icon_f754be9e34a6bccdb6fa37cbbb374c66);
+            
+    
+            var marker_a54b1edbc26e8649849e12725946965f = L.marker(
+                [34.18771141765293, 133.0884674358904],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_284ff27cfede3517d2ab2747756af89a = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_c46b241bc4132360619e29682f6d101a = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_b166641b09a327499ee8e49109854387 = $(`<div id="html_b166641b09a327499ee8e49109854387" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>鵜島</div>            </div>     </div>`)[0];
+                popup_c46b241bc4132360619e29682f6d101a.setContent(html_b166641b09a327499ee8e49109854387);
+            
+        
+
+        marker_a54b1edbc26e8649849e12725946965f.bindPopup(popup_c46b241bc4132360619e29682f6d101a)
+        ;
+
+        
+    
+    
+                marker_a54b1edbc26e8649849e12725946965f.setIcon(div_icon_284ff27cfede3517d2ab2747756af89a);
+            
+    
+            var marker_1885cfb202462e5ca04a96da007bb9b6 = L.marker(
+                [34.19497543699619, 133.07543412557763],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_76078d8ecd6ba9a0051a29bf9cd6c7ed = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_d71a7db742e4b4e87cf1587ecb1ea73e = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_3f63a6b72c81fb9136124fe1d83d6309 = $(`<div id="html_3f63a6b72c81fb9136124fe1d83d6309" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>見近島</div>            </div>     </div>`)[0];
+                popup_d71a7db742e4b4e87cf1587ecb1ea73e.setContent(html_3f63a6b72c81fb9136124fe1d83d6309);
+            
+        
+
+        marker_1885cfb202462e5ca04a96da007bb9b6.bindPopup(popup_d71a7db742e4b4e87cf1587ecb1ea73e)
+        ;
+
+        
+    
+    
+                marker_1885cfb202462e5ca04a96da007bb9b6.setIcon(div_icon_76078d8ecd6ba9a0051a29bf9cd6c7ed);
+            
+    
+            var marker_8c01043aeb00cee22e93df83c5e4f974 = L.marker(
+                [34.18280709530979, 133.08096590276082],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_c63c039ddae4f289796be1075ed8f219 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_98de4d3844b59dd61ea397f8e053a87a = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_2e25c0012b0dc60e430bded0e95e2cd4 = $(`<div id="html_2e25c0012b0dc60e430bded0e95e2cd4" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>能島</div>            </div>     </div>`)[0];
+                popup_98de4d3844b59dd61ea397f8e053a87a.setContent(html_2e25c0012b0dc60e430bded0e95e2cd4);
+            
+        
+
+        marker_8c01043aeb00cee22e93df83c5e4f974.bindPopup(popup_98de4d3844b59dd61ea397f8e053a87a)
+        ;
+
+        
+    
+    
+                marker_8c01043aeb00cee22e93df83c5e4f974.setIcon(div_icon_c63c039ddae4f289796be1075ed8f219);
+            
+    
+            var marker_9fd1c2cfa3dc2cbc58b163efd39c9c08 = L.marker(
+                [34.15839952933292, 133.05869062865378],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_c8252a709bbb3fdcd79184b0d0bfe4e3 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_27aae1e7a2a0c2c2b324b59b14a10146 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_e54cb7e9c61c053cd4c06bf914b16d83 = $(`<div id="html_e54cb7e9c61c053cd4c06bf914b16d83" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>大島</div>            </div>     </div>`)[0];
+                popup_27aae1e7a2a0c2c2b324b59b14a10146.setContent(html_e54cb7e9c61c053cd4c06bf914b16d83);
+            
+        
+
+        marker_9fd1c2cfa3dc2cbc58b163efd39c9c08.bindPopup(popup_27aae1e7a2a0c2c2b324b59b14a10146)
+        ;
+
+        
+    
+    
+                marker_9fd1c2cfa3dc2cbc58b163efd39c9c08.setIcon(div_icon_c8252a709bbb3fdcd79184b0d0bfe4e3);
+            
+    
+            var marker_efe921e7b33c74b386b86a5d2b850059 = L.marker(
+                [34.151612816618865, 133.00019126170508],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_a17931600220e796ba94b60ad481457d = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_cca410cd4d62153ebe068032e886e798 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_c1fa755df615cdcaa4e873a4a86192ab = $(`<div id="html_c1fa755df615cdcaa4e873a4a86192ab" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>津島</div>            </div>     </div>`)[0];
+                popup_cca410cd4d62153ebe068032e886e798.setContent(html_c1fa755df615cdcaa4e873a4a86192ab);
+            
+        
+
+        marker_efe921e7b33c74b386b86a5d2b850059.bindPopup(popup_cca410cd4d62153ebe068032e886e798)
+        ;
+
+        
+    
+    
+                marker_efe921e7b33c74b386b86a5d2b850059.setIcon(div_icon_a17931600220e796ba94b60ad481457d);
+            
+    
+            var marker_34b9362f5605134bb4ffdb582973dc22 = L.marker(
+                [34.117111039385385, 132.99333153146145],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_10ab6ed04c689cafa5f7c2d91ff9dcc5 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_226e393220dcf314d8326c6845c068ad = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_799e7d85c36217e42dcf88e989968932 = $(`<div id="html_799e7d85c36217e42dcf88e989968932" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>馬島</div>            </div>     </div>`)[0];
+                popup_226e393220dcf314d8326c6845c068ad.setContent(html_799e7d85c36217e42dcf88e989968932);
+            
+        
+
+        marker_34b9362f5605134bb4ffdb582973dc22.bindPopup(popup_226e393220dcf314d8326c6845c068ad)
+        ;
+
+        
+    
+    
+                marker_34b9362f5605134bb4ffdb582973dc22.setIcon(div_icon_10ab6ed04c689cafa5f7c2d91ff9dcc5);
+            
+    
+            var marker_848601f0bd8708cc24ad43f63a9a929b = L.marker(
+                [34.12591689175066, 132.97890463135647],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_40a0dde90bf7db1ac40fffa416477341 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_2636b638670d2612a34daf500b7267db = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_8e3d6770696ad47f66a96cab0246ea63 = $(`<div id="html_8e3d6770696ad47f66a96cab0246ea63" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>小島</div>            </div>     </div>`)[0];
+                popup_2636b638670d2612a34daf500b7267db.setContent(html_8e3d6770696ad47f66a96cab0246ea63);
+            
+        
+
+        marker_848601f0bd8708cc24ad43f63a9a929b.bindPopup(popup_2636b638670d2612a34daf500b7267db)
+        ;
+
+        
+    
+    
+                marker_848601f0bd8708cc24ad43f63a9a929b.setIcon(div_icon_40a0dde90bf7db1ac40fffa416477341);
+            
+    
+            var marker_3a7b368437cf454f2359861efad684e6 = L.marker(
+                [34.11810379632069, 132.96928916473993],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_933dc72092e1056e56c89ecdb88dfb06 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_813684b1824ac473f59ffb99632eaf86 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_b270c71548985e0dc0cdc1e9d0dd18ef = $(`<div id="html_b270c71548985e0dc0cdc1e9d0dd18ef" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>来島</div>            </div>     </div>`)[0];
+                popup_813684b1824ac473f59ffb99632eaf86.setContent(html_b270c71548985e0dc0cdc1e9d0dd18ef);
+            
+        
+
+        marker_3a7b368437cf454f2359861efad684e6.bindPopup(popup_813684b1824ac473f59ffb99632eaf86)
+        ;
+
+        
+    
+    
+                marker_3a7b368437cf454f2359861efad684e6.setIcon(div_icon_933dc72092e1056e56c89ecdb88dfb06);
+            
+    
+            var marker_af82ec71ea72d098e8400cbdfd935105 = L.marker(
+                [34.05811344084179, 133.10048739542435],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_e46f922ce8a549bbd26458f1a3e7a25f = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_c76ed6a79939567053ae2c583ce6027d = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_381646aa971429daf6f562a430d90a22 = $(`<div id="html_381646aa971429daf6f562a430d90a22" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>比岐島</div>            </div>     </div>`)[0];
+                popup_c76ed6a79939567053ae2c583ce6027d.setContent(html_381646aa971429daf6f562a430d90a22);
+            
+        
+
+        marker_af82ec71ea72d098e8400cbdfd935105.bindPopup(popup_c76ed6a79939567053ae2c583ce6027d)
+        ;
+
+        
+    
+    
+                marker_af82ec71ea72d098e8400cbdfd935105.setIcon(div_icon_e46f922ce8a549bbd26458f1a3e7a25f);
+            
+    
+            var marker_5a728663467d7c5b73d943d64fd4ee11 = L.marker(
+                [34.175961257466426, 133.32038728948962],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_6dbfe70597bdd7180c66e82d8a2da170 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_dc88d8d5e85713106ba35a2985375ace = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_2aaa1108efa2ccf6ae0ae18a5350389a = $(`<div id="html_2aaa1108efa2ccf6ae0ae18a5350389a" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>魚島</div>            </div>     </div>`)[0];
+                popup_dc88d8d5e85713106ba35a2985375ace.setContent(html_2aaa1108efa2ccf6ae0ae18a5350389a);
+            
+        
+
+        marker_5a728663467d7c5b73d943d64fd4ee11.bindPopup(popup_dc88d8d5e85713106ba35a2985375ace)
+        ;
+
+        
+    
+    
+                marker_5a728663467d7c5b73d943d64fd4ee11.setIcon(div_icon_6dbfe70597bdd7180c66e82d8a2da170);
+            
+    
+            var marker_e2d5aab36379e7d86420828dbcd8b8b0 = L.marker(
+                [34.1889475727899, 133.2697731636297],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_e3e4801dc3bf82ebcf687dc4bda8d671 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_fcff009ca0b0a49bf8495c7563a4861b = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_d1e400ae70c0400acd15546d39a8b526 = $(`<div id="html_d1e400ae70c0400acd15546d39a8b526" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>高井神島</div>            </div>     </div>`)[0];
+                popup_fcff009ca0b0a49bf8495c7563a4861b.setContent(html_d1e400ae70c0400acd15546d39a8b526);
+            
+        
+
+        marker_e2d5aab36379e7d86420828dbcd8b8b0.bindPopup(popup_fcff009ca0b0a49bf8495c7563a4861b)
+        ;
+
+        
+    
+    
+                marker_e2d5aab36379e7d86420828dbcd8b8b0.setIcon(div_icon_e3e4801dc3bf82ebcf687dc4bda8d671);
+            
+    
+            var marker_ccbe35eba647928b94d2f3c4828aef23 = L.marker(
+                [34.23098140092988, 133.2592059477169],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_cb682bea133096815c6e57440168d56f = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_10b09e67d81875b31781ea64549e6c44 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_330750eb83588b46133a55c9478539d4 = $(`<div id="html_330750eb83588b46133a55c9478539d4" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>豊島</div>            </div>     </div>`)[0];
+                popup_10b09e67d81875b31781ea64549e6c44.setContent(html_330750eb83588b46133a55c9478539d4);
+            
+        
+
+        marker_ccbe35eba647928b94d2f3c4828aef23.bindPopup(popup_10b09e67d81875b31781ea64549e6c44)
+        ;
+
+        
+    
+    
+                marker_ccbe35eba647928b94d2f3c4828aef23.setIcon(div_icon_cb682bea133096815c6e57440168d56f);
+            
+    
+            var marker_76ab19cefbb26db1687002f482535aa1 = L.marker(
+                [34.22174513900784, 133.15185649753326],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_e830ba56eba967e93492e051d31ee270 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_2e951b0dfddf85e1ebe1c53394fa04cb = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_6424fb43198a5b90c3740c932b21f1e0 = $(`<div id="html_6424fb43198a5b90c3740c932b21f1e0" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>津波島</div>            </div>     </div>`)[0];
+                popup_2e951b0dfddf85e1ebe1c53394fa04cb.setContent(html_6424fb43198a5b90c3740c932b21f1e0);
+            
+        
+
+        marker_76ab19cefbb26db1687002f482535aa1.bindPopup(popup_2e951b0dfddf85e1ebe1c53394fa04cb)
+        ;
+
+        
+    
+    
+                marker_76ab19cefbb26db1687002f482535aa1.setIcon(div_icon_e830ba56eba967e93492e051d31ee270);
+            
+    
+            var marker_13d648a4bbb65f80db66ddd330b1954b = L.marker(
+                [34.239156981874714, 133.16187159332992],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_2a2b647499f7599ac5c75f7909723d0c = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_be495edae335c0f92392db90cc977f40 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_833af1167454ab82e8f02b0cf8432d29 = $(`<div id="html_833af1167454ab82e8f02b0cf8432d29" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>赤穂根島</div>            </div>     </div>`)[0];
+                popup_be495edae335c0f92392db90cc977f40.setContent(html_833af1167454ab82e8f02b0cf8432d29);
+            
+        
+
+        marker_13d648a4bbb65f80db66ddd330b1954b.bindPopup(popup_be495edae335c0f92392db90cc977f40)
+        ;
+
+        
+    
+    
+                marker_13d648a4bbb65f80db66ddd330b1954b.setIcon(div_icon_2a2b647499f7599ac5c75f7909723d0c);
+            
+    
+            var marker_a7c029a65c96abb62619872d8de5c0c8 = L.marker(
+                [34.26027851648599, 133.146895749148],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_ce725d492d728bb38495d6626d86b015 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_7ec50df669aa82fe8bc14fe6fcbf2509 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_a114dc892520c741bc5cead21fb74199 = $(`<div id="html_a114dc892520c741bc5cead21fb74199" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>岩城島</div>            </div>     </div>`)[0];
+                popup_7ec50df669aa82fe8bc14fe6fcbf2509.setContent(html_a114dc892520c741bc5cead21fb74199);
+            
+        
+
+        marker_a7c029a65c96abb62619872d8de5c0c8.bindPopup(popup_7ec50df669aa82fe8bc14fe6fcbf2509)
+        ;
+
+        
+    
+    
+                marker_a7c029a65c96abb62619872d8de5c0c8.setIcon(div_icon_ce725d492d728bb38495d6626d86b015);
+            
+    
+            var marker_f28572a96b8194286e5dff2d2c898aec = L.marker(
+                [34.24225204375021, 133.1879857241037],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_a6d197fb0e52e043c67f782b1f983186 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_b32dcd12ae8f850bd3d834dfbe102e43 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_198344766739181d85428f525b9bb51f = $(`<div id="html_198344766739181d85428f525b9bb51f" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>佐島</div>            </div>     </div>`)[0];
+                popup_b32dcd12ae8f850bd3d834dfbe102e43.setContent(html_198344766739181d85428f525b9bb51f);
+            
+        
+
+        marker_f28572a96b8194286e5dff2d2c898aec.bindPopup(popup_b32dcd12ae8f850bd3d834dfbe102e43)
+        ;
+
+        
+    
+    
+                marker_f28572a96b8194286e5dff2d2c898aec.setIcon(div_icon_a6d197fb0e52e043c67f782b1f983186);
+            
+    
+            var marker_4d71415767a5698fffcdc6fc3c7d4c29 = L.marker(
+                [34.273196402265256, 133.2191542010554],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_a292f41f724fa7cb914c17d78762afc2 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_1be4bde4c9b10a46bf88eb4a1fa076a0 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_444149126206a89d4f24509318c13f7c = $(`<div id="html_444149126206a89d4f24509318c13f7c" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>弓削島</div>            </div>     </div>`)[0];
+                popup_1be4bde4c9b10a46bf88eb4a1fa076a0.setContent(html_444149126206a89d4f24509318c13f7c);
+            
+        
+
+        marker_4d71415767a5698fffcdc6fc3c7d4c29.bindPopup(popup_1be4bde4c9b10a46bf88eb4a1fa076a0)
+        ;
+
+        
+    
+    
+                marker_4d71415767a5698fffcdc6fc3c7d4c29.setIcon(div_icon_a292f41f724fa7cb914c17d78762afc2);
+            
+    
+            var marker_0c7c8f4b6967d745e59fd579ec8c8e32 = L.marker(
+                [34.26871017593133, 133.17768983072384],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_060af123d4ea487f1cbc5c547e179c28 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_d847f294bb96e054595df9ac59d5cb8e = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_950947560fd142c6b0647c19d377cfc7 = $(`<div id="html_950947560fd142c6b0647c19d377cfc7" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>生名島</div>            </div>     </div>`)[0];
+                popup_d847f294bb96e054595df9ac59d5cb8e.setContent(html_950947560fd142c6b0647c19d377cfc7);
+            
+        
+
+        marker_0c7c8f4b6967d745e59fd579ec8c8e32.bindPopup(popup_d847f294bb96e054595df9ac59d5cb8e)
+        ;
+
+        
+    
+    
+                marker_0c7c8f4b6967d745e59fd579ec8c8e32.setIcon(div_icon_060af123d4ea487f1cbc5c547e179c28);
+            
+    
+            var marker_1b4b4bc27df48dabf8441c5b347f6d30 = L.marker(
+                [34.26167095911914, 133.1492357267782],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_50bdd66124749fe3a6937880798fa1e7 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_d273329b2b8f85efb6588c659cda94d0 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_0c702cd8fd64a991009a45c105fb989c = $(`<div id="html_0c702cd8fd64a991009a45c105fb989c" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>岩城島</div>            </div>     </div>`)[0];
+                popup_d273329b2b8f85efb6588c659cda94d0.setContent(html_0c702cd8fd64a991009a45c105fb989c);
+            
+        
+
+        marker_1b4b4bc27df48dabf8441c5b347f6d30.bindPopup(popup_d273329b2b8f85efb6588c659cda94d0)
+        ;
+
+        
+    
+    
+                marker_1b4b4bc27df48dabf8441c5b347f6d30.setIcon(div_icon_50bdd66124749fe3a6937880798fa1e7);
+            
+    
+            var marker_84ff98e5193bd00ac898509f6e663e47 = L.marker(
+                [34.28874626007335, 133.1104657922661],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_c0ec49bae04521a3da44b333cf4a7e24 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_749d490838efb2d5f4cef85d2ea42cc4 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_6729a59c897d11f38b5c6b28292ae380 = $(`<div id="html_6729a59c897d11f38b5c6b28292ae380" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>生口島</div>            </div>     </div>`)[0];
+                popup_749d490838efb2d5f4cef85d2ea42cc4.setContent(html_6729a59c897d11f38b5c6b28292ae380);
+            
+        
+
+        marker_84ff98e5193bd00ac898509f6e663e47.bindPopup(popup_749d490838efb2d5f4cef85d2ea42cc4)
+        ;
+
+        
+    
+    
+                marker_84ff98e5193bd00ac898509f6e663e47.setIcon(div_icon_c0ec49bae04521a3da44b333cf4a7e24);
+            
+    
+            var marker_861e349156968663b857987fbf7eb4b1 = L.marker(
+                [34.32119596721006, 133.17421963098298],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_a635d5d96270019b7648c90186fb21c3 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_b118cf8dd7a1b15bad4ca522a45ac889 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_ccd982b213611e6bd4df8003dbaae40a = $(`<div id="html_ccd982b213611e6bd4df8003dbaae40a" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>因島</div>            </div>     </div>`)[0];
+                popup_b118cf8dd7a1b15bad4ca522a45ac889.setContent(html_ccd982b213611e6bd4df8003dbaae40a);
+            
+        
+
+        marker_861e349156968663b857987fbf7eb4b1.bindPopup(popup_b118cf8dd7a1b15bad4ca522a45ac889)
+        ;
+
+        
+    
+    
+                marker_861e349156968663b857987fbf7eb4b1.setIcon(div_icon_a635d5d96270019b7648c90186fb21c3);
+            
+    
+            var marker_28b188846f430b78aabf5ddba4f6121d = L.marker(
+                [34.31605951447949, 133.0753895030075],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_37d7e81a299229caab80ec66987af150 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_25c2057399ef6833c770c187b6d23039 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_01c0ec5366feb9081ab0e29a88b0550a = $(`<div id="html_01c0ec5366feb9081ab0e29a88b0550a" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>高根島</div>            </div>     </div>`)[0];
+                popup_25c2057399ef6833c770c187b6d23039.setContent(html_01c0ec5366feb9081ab0e29a88b0550a);
+            
+        
+
+        marker_28b188846f430b78aabf5ddba4f6121d.bindPopup(popup_25c2057399ef6833c770c187b6d23039)
+        ;
+
+        
+    
+    
+                marker_28b188846f430b78aabf5ddba4f6121d.setIcon(div_icon_37d7e81a299229caab80ec66987af150);
+            
+    
+            var marker_7b89b9b3299b6ee200d0429ad73cd12b = L.marker(
+                [34.33835108743057, 133.11330314749293],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_4450d5190136248668c7b458c121add4 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_828636371cf954753eebf08df9077287 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_454100658ea4a892e29ac4bff54a37f5 = $(`<div id="html_454100658ea4a892e29ac4bff54a37f5" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>佐木島</div>            </div>     </div>`)[0];
+                popup_828636371cf954753eebf08df9077287.setContent(html_454100658ea4a892e29ac4bff54a37f5);
+            
+        
+
+        marker_7b89b9b3299b6ee200d0429ad73cd12b.bindPopup(popup_828636371cf954753eebf08df9077287)
+        ;
+
+        
+    
+    
+                marker_7b89b9b3299b6ee200d0429ad73cd12b.setIcon(div_icon_4450d5190136248668c7b458c121add4);
+            
+    
+            var marker_10a0b0dc90d870103b0f0c593072fc0a = L.marker(
+                [34.3638312574564, 133.10391191935295],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_b230273a783638198a2f8e8361744fa7 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_f81cd3fa503f7e8dc10f7fcd57b98ab4 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_92ab83408196989d8451bbd95da4f891 = $(`<div id="html_92ab83408196989d8451bbd95da4f891" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>小佐木島</div>            </div>     </div>`)[0];
+                popup_f81cd3fa503f7e8dc10f7fcd57b98ab4.setContent(html_92ab83408196989d8451bbd95da4f891);
+            
+        
+
+        marker_10a0b0dc90d870103b0f0c593072fc0a.bindPopup(popup_f81cd3fa503f7e8dc10f7fcd57b98ab4)
+        ;
+
+        
+    
+    
+                marker_10a0b0dc90d870103b0f0c593072fc0a.setIcon(div_icon_b230273a783638198a2f8e8361744fa7);
+            
+    
+            var marker_2e029f6a38dbd3690cef8e5dff031bdc = L.marker(
+                [34.365883580989816, 133.14081943822214],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_d9dd5a54f1afd1e037dfac999ea57283 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_55b002eba05bcba7c0c79a72dc435081 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_c2dd6d7859a6dccd7063d08ac5a95d87 = $(`<div id="html_c2dd6d7859a6dccd7063d08ac5a95d87" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>細島</div>            </div>     </div>`)[0];
+                popup_55b002eba05bcba7c0c79a72dc435081.setContent(html_c2dd6d7859a6dccd7063d08ac5a95d87);
+            
+        
+
+        marker_2e029f6a38dbd3690cef8e5dff031bdc.bindPopup(popup_55b002eba05bcba7c0c79a72dc435081)
+        ;
+
+        
+    
+    
+                marker_2e029f6a38dbd3690cef8e5dff031bdc.setIcon(div_icon_d9dd5a54f1afd1e037dfac999ea57283);
+            
+    
+            var marker_323cb8b954e9d04ec12f658b436293e7 = L.marker(
+                [34.35505904364793, 133.14008586313662],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_cfe3d6fe5d4cb90ab0026bbb8b82941f = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_168f734e1b8b2dbe0a4b013d4dc67a3a = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_6a0fbbdfa82d69ba0bed1bd394221c69 = $(`<div id="html_6a0fbbdfa82d69ba0bed1bd394221c69" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>小細島</div>            </div>     </div>`)[0];
+                popup_168f734e1b8b2dbe0a4b013d4dc67a3a.setContent(html_6a0fbbdfa82d69ba0bed1bd394221c69);
+            
+        
+
+        marker_323cb8b954e9d04ec12f658b436293e7.bindPopup(popup_168f734e1b8b2dbe0a4b013d4dc67a3a)
+        ;
+
+        
+    
+    
+                marker_323cb8b954e9d04ec12f658b436293e7.setIcon(div_icon_cfe3d6fe5d4cb90ab0026bbb8b82941f);
+            
+    
+            var marker_50c576551b182161a4438cc3efebad51 = L.marker(
+                [34.38142496701659, 133.1625724579913],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_1c0a546cd8cb15b07ed231c741a7e041 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_5cd5aa5d3e7cee8cb8ecc64b548f6e4a = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_ad3169b2ae4306e9646c5858e0de12e2 = $(`<div id="html_ad3169b2ae4306e9646c5858e0de12e2" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>岩子島</div>            </div>     </div>`)[0];
+                popup_5cd5aa5d3e7cee8cb8ecc64b548f6e4a.setContent(html_ad3169b2ae4306e9646c5858e0de12e2);
+            
+        
+
+        marker_50c576551b182161a4438cc3efebad51.bindPopup(popup_5cd5aa5d3e7cee8cb8ecc64b548f6e4a)
+        ;
+
+        
+    
+    
+                marker_50c576551b182161a4438cc3efebad51.setIcon(div_icon_1c0a546cd8cb15b07ed231c741a7e041);
+            
+    
+            var marker_0b6f969339bcee3b00dfe7eeefb79439 = L.marker(
+                [34.38455176385054, 133.20385669315496],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_78142c999e3319ea0fa6f46304b74d7d = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_988295c7566106344309bd0b5fe26adc = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_1a71525647d9d90821899dcb5655cdcb = $(`<div id="html_1a71525647d9d90821899dcb5655cdcb" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>向島</div>            </div>     </div>`)[0];
+                popup_988295c7566106344309bd0b5fe26adc.setContent(html_1a71525647d9d90821899dcb5655cdcb);
+            
+        
+
+        marker_0b6f969339bcee3b00dfe7eeefb79439.bindPopup(popup_988295c7566106344309bd0b5fe26adc)
+        ;
+
+        
+    
+    
+                marker_0b6f969339bcee3b00dfe7eeefb79439.setIcon(div_icon_78142c999e3319ea0fa6f46304b74d7d);
+            
+    
+            var marker_031c18cd623d07cb1527155ef528b5e7 = L.marker(
+                [34.374528298791446, 133.24222501965463],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_090a9bd30ee6f1a15a2a6bb18e18cb9b = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_fa20108f090e2e2238668719568bc505 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_88dc95e3731886de45c98267a0084bc2 = $(`<div id="html_88dc95e3731886de45c98267a0084bc2" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>加島</div>            </div>     </div>`)[0];
+                popup_fa20108f090e2e2238668719568bc505.setContent(html_88dc95e3731886de45c98267a0084bc2);
+            
+        
+
+        marker_031c18cd623d07cb1527155ef528b5e7.bindPopup(popup_fa20108f090e2e2238668719568bc505)
+        ;
+
+        
+    
+    
+                marker_031c18cd623d07cb1527155ef528b5e7.setIcon(div_icon_090a9bd30ee6f1a15a2a6bb18e18cb9b);
+            
+    
+            var marker_eb7355017da79b78d30e3bc6e731c252 = L.marker(
+                [34.372788394463285, 133.26966807640545],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_2d1e6c9604cc9aa21662cd537856772e = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_1ccc150e72f21ce1a77fb0fdfb169352 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_eef62df4ced1f31324d8d0584c9beb2e = $(`<div id="html_eef62df4ced1f31324d8d0584c9beb2e" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>百島</div>            </div>     </div>`)[0];
+                popup_1ccc150e72f21ce1a77fb0fdfb169352.setContent(html_eef62df4ced1f31324d8d0584c9beb2e);
+            
+        
+
+        marker_eb7355017da79b78d30e3bc6e731c252.bindPopup(popup_1ccc150e72f21ce1a77fb0fdfb169352)
+        ;
+
+        
+    
+    
+                marker_eb7355017da79b78d30e3bc6e731c252.setIcon(div_icon_2d1e6c9604cc9aa21662cd537856772e);
+            
+    
+            var marker_b85bd1ea95e45631bd73ae36d4a86372 = L.marker(
+                [34.344342612215144, 133.27689188952755],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_ab6dfbfcbdc43d8e0dc7730737c004e7 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_7459b88c909796cd613248d919d0b2c9 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_d20bf237c929b9c3c1e59107b8346742 = $(`<div id="html_d20bf237c929b9c3c1e59107b8346742" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>横島</div>            </div>     </div>`)[0];
+                popup_7459b88c909796cd613248d919d0b2c9.setContent(html_d20bf237c929b9c3c1e59107b8346742);
+            
+        
+
+        marker_b85bd1ea95e45631bd73ae36d4a86372.bindPopup(popup_7459b88c909796cd613248d919d0b2c9)
+        ;
+
+        
+    
+    
+                marker_b85bd1ea95e45631bd73ae36d4a86372.setIcon(div_icon_ab6dfbfcbdc43d8e0dc7730737c004e7);
+            
+    
+            var marker_77b4699e3c9a664da098b5ac571380dd = L.marker(
+                [34.35799634475764, 133.3163160334716],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_2f11fd40f2314b2039ec1bdf0a5ec03f = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_587c95db7dda50ff0c7dcfc53b9966fb = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_d4aeb7fb4b648325b1636a586929e663 = $(`<div id="html_d4aeb7fb4b648325b1636a586929e663" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>田島</div>            </div>     </div>`)[0];
+                popup_587c95db7dda50ff0c7dcfc53b9966fb.setContent(html_d4aeb7fb4b648325b1636a586929e663);
+            
+        
+
+        marker_77b4699e3c9a664da098b5ac571380dd.bindPopup(popup_587c95db7dda50ff0c7dcfc53b9966fb)
+        ;
+
+        
+    
+    
+                marker_77b4699e3c9a664da098b5ac571380dd.setIcon(div_icon_2f11fd40f2314b2039ec1bdf0a5ec03f);
+            
+    
+            var marker_feec0e50ebce7cece840c01f7dd0a2d1 = L.marker(
+                [34.383573574969866, 133.39556995228224],
+                {
+}
+            ).addTo(feature_group_05d2cb96d1a1b4526e373e873eee7721);
+        
+    
+            var div_icon_1ce633d6999747804e498704b995d0fd = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:5px;\n              height:5px;\n              background:#3a3a3a;\n              opacity:0.45;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [5, 5],
+  "iconAnchor": [2, 2],
+  "popupAnchor": [0, -3],
+  "className": "empty",
+});
+        
+    
+        var popup_d4d3ef1bf54f8cfe8dc2a6dfe2183e52 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_3049f66100bab4f416032db5d9218b47 = $(`<div id="html_3049f66100bab4f416032db5d9218b47" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.35;">       <div>仙酔島</div>            </div>     </div>`)[0];
+                popup_d4d3ef1bf54f8cfe8dc2a6dfe2183e52.setContent(html_3049f66100bab4f416032db5d9218b47);
+            
+        
+
+        marker_feec0e50ebce7cece840c01f7dd0a2d1.bindPopup(popup_d4d3ef1bf54f8cfe8dc2a6dfe2183e52)
+        ;
+
+        
+    
+    
+                marker_feec0e50ebce7cece840c01f7dd0a2d1.setIcon(div_icon_1ce633d6999747804e498704b995d0fd);
+            
+    
+            var feature_group_1d2faf6783a15587fb26812c98c7d7ad = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var marker_95c3dc50140fed84daf6e4282e7761ff = L.marker(
+                [34.31903341455433, 132.8165584534892],
+                {
+}
+            ).addTo(feature_group_1d2faf6783a15587fb26812c98c7d7ad);
+        
+    
+            var div_icon_283a9fb7272853a05780772277ee8cf7 = L.divIcon({
+  "html": "\n            \u003cdiv style=\"\n              width:10px;\n              height:10px;\n              background:#c40000;\n              opacity:0.4;\n            \"\u003e\u003c/div\u003e\n            ",
+  "iconSize": [10, 10],
+  "iconAnchor": [5, 5],
+  "popupAnchor": [0, -5],
+  "className": "empty",
+});
+        
+    
+        var popup_bc3177898447fb5eea021c91352c8976 = L.popup({
+  "maxWidth": 260,
+});
+
+        
+            
+                var html_45587f19f0ab15b084147309a3dd064c = $(`<div id="html_45587f19f0ab15b084147309a3dd064c" style="width: 100.0%; height: 100.0%;">     <div style="text-align:center; font-size:13px; line-height:1.4;">       <div style="margin-bottom:6px;">         <a href="https://www.tsukasyuzou.jp/" target="_blank" rel="noopener noreferrer">柄酒造</a>       </div>              <div style="display:flex; justify-content:center; gap:10px; align-items:center;">           <a href="https://www.instagram.com/otafuku.sake/" target="_blank" rel="noopener noreferrer" style="display:inline-block; text-decoration:none;">              <svg width="18" height="18" viewBox="0 0 24 24">   <path fill="rgba(0,0,0,0.65)" d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm10 2H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3zm-5 4.5A5.5 5.5 0 1 1 6.5 14 5.5 5.5 0 0 1 12 8.5zm0 2A3.5 3.5 0 1 0 15.5 14 3.5 3.5 0 0 0 12 10.5zM18 6.8a1.2 1.2 0 1 1-1.2 1.2A1.2 1.2 0 0 1 18 6.8z"/> </svg>            </a>         </div>         </div></div>`)[0];
+                popup_bc3177898447fb5eea021c91352c8976.setContent(html_45587f19f0ab15b084147309a3dd064c);
+            
+        
+
+        marker_95c3dc50140fed84daf6e4282e7761ff.bindPopup(popup_bc3177898447fb5eea021c91352c8976)
+        ;
+
+        
+    
+    
+                marker_95c3dc50140fed84daf6e4282e7761ff.setIcon(div_icon_283a9fb7272853a05780772277ee8cf7);
+            
+    
+            feature_group_1d2faf6783a15587fb26812c98c7d7ad.addTo(map_53dc65b621e099d0657b6f23d54d4a28);
+        
 </script>
 </html>
