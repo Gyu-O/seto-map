@@ -186,35 +186,32 @@ for _, r in df_islands.iterrows():
         weight=0,
         fill=True,
         fill_color=area_color,
-        fill_opacity=0.65,
+        fill_opacity=0.3,
         popup=folium.Popup(name, max_width=220)
     ).add_to(layer_area)
 
-# 地域：◎（二重丸）
+# 地域：名前だけ常時表示（中央合わせ・透明度指定）
 for _, r in df_regions.iterrows():
     name = str(r["name"]).strip()
     lat = float(r["lat"])
     lon = float(r["lon"])
 
-    # 外側の輪
-    folium.CircleMarker(
+    folium.Marker(
         location=[lat, lon],
-        radius=4.5,
-        color=area_color,
-        weight=2,
-        fill=False,
-        opacity=0.65
-    ).add_to(layer_area)
-
-    # 内側の輪（popupはこちらに）
-    folium.CircleMarker(
-        location=[lat, lon],
-        radius=2,
-        color=area_color,
-        weight=2,
-        fill=False,
-        opacity=0.65,
-        popup=folium.Popup(name, max_width=220)
+        icon=DivIcon(
+            icon_size=(240, 24),
+            icon_anchor=(120, 12),  # ← 中央合わせ（icon_sizeの半分）
+            html=f"""
+            <div style="
+              font-size:9px;
+              color:rgba(0,0,0,0.6);   /* ← ここで透明度調整 */
+              white-space:nowrap;
+              text-align:center;
+              text-shadow:0 0 3px rgba(255,255,255,0.9);
+              pointer-events:none;
+            ">{name}</div>
+            """
+        )
     ).add_to(layer_area)
 
 # =====================
