@@ -409,8 +409,8 @@ template = f"""
     // ===== スマホは広域で島名を出す =====
     var NAME_ZOOM_BASE = {NAME_ZOOM};
     var isMobile = window.matchMedia && window.matchMedia("(max-width: 600px)").matches;
-    var NAME_ZOOM = isMobile ? (NAME_ZOOM_BASE - 1) : NAME_ZOOM_BASE;
-    var mobileBoost = isMobile ? 1 : 0;
+    var NAME_ZOOM = isMobile ? (NAME_ZOOM_BASE - 0.5) : NAME_ZOOM_BASE;
+    var mobileBoost = isMobile ? 0.5 : 0;
 
     var islandRules = [{island_rules_js}];
 
