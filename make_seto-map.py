@@ -69,7 +69,7 @@ folium.TileLayer(
 # =====================
 # レイヤー
 # =====================
-layer_sake    = folium.FeatureGroup(name="酒蔵・醸造所", show=True)
+layer_sake    = folium.FeatureGroup(name="酒蔵・醸造所", show=False)
 layer_jinja   = folium.FeatureGroup(name="寺社", show=False)
 layer_arch    = folium.FeatureGroup(name="建築", show=False)
 layer_art     = folium.FeatureGroup(name="アート", show=False)
