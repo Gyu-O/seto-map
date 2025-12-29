@@ -124,8 +124,18 @@ for _, r in df_sake.iterrows():
 
     title = f'<a href="{x_url}" target="_blank" rel="noopener noreferrer">{name}</a>' if x_url else name
     extra = ""
-    if is_otafuku and insta_url:
-        extra = f'<div style="margin-top:6px;"><a href="{insta_url}" target="_blank" rel="noopener noreferrer">Instagram</a></div>'
+if is_otafuku and insta_url:
+    extra = f'''
+    <div style="margin-top:6px;">
+      <a href="{insta_url}" target="_blank" rel="noopener noreferrer"
+         style="display:inline-flex; align-items:center; justify-content:center;">
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-label="Instagram">
+          <path fill="rgba(0,0,0,0.65)" d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm10 2H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3zm-5 4.5A5.5 5.5 0 1 1 6.5 14 5.5 5.5 0 0 1 12 8.5zm0 2A3.5 3.5 0 1 0 15.5 14 3.5 3.5 0 0 0 12 10.5zM18 6.8a1.2 1.2 0 1 1-1.2 1.2A1.2 1.2 0 0 1 18 6.8z"/>
+        </svg>
+      </a>
+    </div>
+    '''
+
 
     popup_html = f"""
     <div style="text-align:center;font-size:13px;line-height:1.35;">
