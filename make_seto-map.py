@@ -18,6 +18,8 @@ df_jinja   = pd.read_csv("jinja.csv")
 df_arch    = pd.read_csv("architecture.csv")
 df_art     = pd.read_csv("art.csv")
 df_matsuri = pd.read_csv("matsuri.csv")
+df_cityscape = pd.read_csv("cityscape.csv")
+df_others   = pd.read_csv("others.csv")
 df_islands = pd.read_csv("islands.csv")   # min_zoom 列（任意）
 df_regions = pd.read_csv("regions.csv")
 
@@ -48,6 +50,8 @@ df_jinja   = normalize_latlon(df_jinja)
 df_arch    = normalize_latlon(df_arch)
 df_art     = normalize_latlon(df_art)
 df_matsuri = normalize_latlon(df_matsuri)
+df_cityscape = normalize_latlon(df_cityscape)
+df_others   = normalize_latlon(df_others)
 df_islands = normalize_latlon(df_islands)
 df_regions = normalize_latlon(df_regions)
 
@@ -70,10 +74,12 @@ folium.TileLayer(
 # レイヤー
 # =====================
 layer_sake    = folium.FeatureGroup(name="酒蔵・醸造所", show=False)
-layer_jinja   = folium.FeatureGroup(name="寺社", show=False)
+layer_jinja   = folium.FeatureGroup(name="神社", show=False)
 layer_arch    = folium.FeatureGroup(name="建築", show=False)
+layer_cityscape = folium.FeatureGroup(name="街並み", show=False)
 layer_art     = folium.FeatureGroup(name="アート", show=False)
 layer_matsuri = folium.FeatureGroup(name="祭り", show=False)
+layer_others  = folium.FeatureGroup(name="その他", show=False)
 layer_area    = folium.FeatureGroup(name="地域・島", show=False)
 layer_otafuku = folium.FeatureGroup(name="柄酒造", show=True)  # 常時表示
 
@@ -83,8 +89,10 @@ layer_otafuku = folium.FeatureGroup(name="柄酒造", show=True)  # 常時表示
 size = 8
 size_otafuku = 10
 size_arch = 8
+size_cityscape = 8
 size_art = 8
 size_matsuri = 9
+size_others = 8
 
 # =====================
 # 共通：ラベルHTML（regions と islands を揃える）
@@ -158,7 +166,7 @@ for _, r in df_sake.iterrows():
     (marker.add_to(layer_otafuku) if is_otafuku else marker.add_to(layer_sake))
 
 # =====================
-# 寺社
+# 神社
 # =====================
 for _, r in df_jinja.iterrows():
     name = str(r.get("name", "")).strip()
@@ -200,6 +208,29 @@ for _, r in df_arch.iterrows():
         ),
         popup=folium.Popup(popup_html, max_width=320)
     ).add_to(layer_arch)
+
+
+# =====================
+# 街並み（スレートブルー）
+# =====================
+for _, r in df_cityscape.iterrows():
+    name = str(r.get("name", "")).strip()
+    lat = float(r["lat"])
+    lon = float(r["lon"])
+    url = str(r.get("url", "")).strip() if pd.notna(r.get("url", "")) else ""
+
+    popup_html = name if not url else f'<a href="{url}" target="_blank" rel="noopener noreferrer">{name}</a>'
+
+    folium.Marker(
+        location=[lat, lon],
+        icon=DivIcon(
+            icon_size=(size_cityscape, size_cityscape),
+            icon_anchor=(size_cityscape // 2, size_cityscape // 2),
+            popup_anchor=(0, -size_cityscape // 2),
+            html=f"""<div style="width:{size_cityscape}px;height:{size_cityscape}px;background:#8a6f5b;opacity:0.45;"></div>"""
+        ),
+        popup=folium.Popup(popup_html, max_width=320)
+    ).add_to(layer_cityscape)
 
 # =====================
 # アート（紫）
@@ -244,6 +275,30 @@ for _, r in df_matsuri.iterrows():
         ),
         popup=folium.Popup(popup_html, max_width=360)
     ).add_to(layer_matsuri)
+
+
+# =====================
+# その他（枠赤）
+# =====================
+for _, r in df_others.iterrows():
+    name = str(r.get("name", "")).strip()
+    lat = float(r["lat"])
+    lon = float(r["lon"])
+    url = str(r.get("url", "")).strip() if pd.notna(r.get("url", "")) else ""
+
+    popup_html = name if not url else f'<a href="{url}" target="_blank" rel="noopener noreferrer">{name}</a>'
+
+    folium.Marker(
+        location=[lat, lon],
+        icon=DivIcon(
+            icon_size=(size_others, size_others),
+            icon_anchor=(size_others // 2, size_others // 2),
+            popup_anchor=(0, -size_others // 2),
+            html=f"""<div style="width:{size_others}px;height:{size_others}px;box-sizing:border-box;border:1.5px solid rgba(196,0,0,0.7);background:transparent;border-radius:1px;"></div>"""
+        ),
+        popup=folium.Popup(popup_html, max_width=320)
+    ).add_to(layer_others)
+
 
 # =====================
 # 地域・島（濃いグレー）
@@ -309,9 +364,11 @@ for _, r in df_regions.iterrows():
 layer_sake.add_to(m)
 layer_jinja.add_to(m)
 layer_arch.add_to(m)
+layer_cityscape.add_to(m)
 layer_art.add_to(m)
 layer_matsuri.add_to(m)
 layer_area.add_to(m)
+layer_others.add_to(m)
 layer_otafuku.add_to(m)
 
 # =====================
@@ -333,6 +390,8 @@ jinja_var = layer_jinja.get_name()
 arch_var = layer_arch.get_name()
 art_var = layer_art.get_name()
 matsuri_var = layer_matsuri.get_name()
+cityscape_var = layer_cityscape.get_name()
+others_var = layer_others.get_name()
 area_var = layer_area.get_name()
 
 template = f"""
@@ -356,8 +415,10 @@ template = f"""
 .on-sake .sq {{ background:rgba(0,102,204,0.5); }}
 .on-jinja .sq {{ background:rgba(26,127,55,0.5); }}
 .on-arch .sq {{ background:rgba(242,195,0,0.5); }}
+.on-cityscape .sq {{ background:rgba(138,111,91,0.55); }}
 .on-art  .sq {{ background:rgba(142,68,173,0.5); }}
 .on-matsuri .sq {{ background:rgba(209,108,0,0.6); }}
+.on-others .sq {{ background:transparent;border:1.5px solid rgba(196,0,0,0.7);box-sizing:border-box; }}
 .on-area .sq {{ background:rgba(58,58,58,0.55); }}
 
 .toggle-static {{ cursor:default; }}
@@ -376,10 +437,12 @@ template = f"""
   <div class="toggle-title">Layers</div>
   <div class="toggle-item toggle-static on-otafuku"><span class="sq"></span><span class="label">柄酒造</span></div>
   <div class="toggle-item" id="btn-sake"><span class="sq"></span><span class="label">酒蔵・醸造所</span></div>
-  <div class="toggle-item" id="btn-jinja"><span class="sq"></span><span class="label">寺社</span></div>
+  <div class="toggle-item" id="btn-jinja"><span class="sq"></span><span class="label">神社</span></div>
   <div class="toggle-item" id="btn-arch"><span class="sq"></span><span class="label">建築</span></div>
+  <div class="toggle-item" id="btn-cityscape"><span class="sq"></span><span class="label">街並み</span></div>
   <div class="toggle-item" id="btn-art"><span class="sq"></span><span class="label">アート</span></div>
   <div class="toggle-item" id="btn-matsuri"><span class="sq"></span><span class="label">祭り</span></div>
+  <div class="toggle-item" id="btn-others"><span class="sq"></span><span class="label">その他</span></div>
   <div class="toggle-item" id="btn-area"><span class="sq"></span><span class="label">地域・島</span></div>
 </div>
 
@@ -390,31 +453,43 @@ template = f"""
     var ls = {sake_var};
     var lj = {jinja_var};
     var larch = {arch_var};
+    var lcity = {cityscape_var};
     var lart = {art_var};
     var lm = {matsuri_var};
+    var lothers = {others_var};
     var larea = {area_var};
 
     var bs=document.getElementById("btn-sake"),
         bj=document.getElementById("btn-jinja"),
         ba=document.getElementById("btn-arch"),
+        bc=document.getElementById("btn-cityscape"),
         bt=document.getElementById("btn-art"),
         bm=document.getElementById("btn-matsuri"),
+        bo=document.getElementById("btn-others"),
         br=document.getElementById("btn-area"),
         box=document.getElementById("customToggle");
 
-    if(!bs||!bj||!ba||!bt||!bm||!br||!box||typeof map==="undefined"){{setTimeout(init,50);return;}}
+    if(!bs||!bj||!ba||!bc||!bt||!bm||!bo||!br||!box||typeof map==="undefined"){{setTimeout(init,50);return;}}
 
     if(window.L&&L.DomEvent){{L.DomEvent.disableClickPropagation(box);L.DomEvent.disableScrollPropagation(box);}}
 
     function set(b,on,c){{on?b.classList.add(c):b.classList.remove(c);}}
+    function safeHas(layer){{ try {{ return map.hasLayer(layer); }} catch(e){{ return false; }} }}
+    function toggle(layer, btn, cls){{
+      if(!layer) return;
+      if(safeHas(layer)){{ map.removeLayer(layer); set(btn,false,cls); }}
+      else {{ map.addLayer(layer); set(btn,true,cls); }}
+    }}
 
     // 初期状態の色
-    set(bs,map.hasLayer(ls),"on-sake");
-    set(bj,map.hasLayer(lj),"on-jinja");
-    set(ba,map.hasLayer(larch),"on-arch");
-    set(bt,map.hasLayer(lart),"on-art");
-    set(bm,map.hasLayer(lm),"on-matsuri");
-    set(br,map.hasLayer(larea),"on-area");
+    set(bs,safeHas(ls),"on-sake");
+    set(bj,safeHas(lj),"on-jinja");
+    set(ba,safeHas(larch),"on-arch");
+    set(bc,safeHas(lcity),"on-cityscape");
+    set(bt,safeHas(lart),"on-art");
+    set(bm,safeHas(lm),"on-matsuri");
+    set(bo,safeHas(lothers),"on-others");
+    set(br,safeHas(larea),"on-area");
 
     // ===== スマホは広域で島名を出す =====
     var NAME_ZOOM_BASE = {NAME_ZOOM};
@@ -425,14 +500,14 @@ template = f"""
     var islandRules = [{island_rules_js}];
 
     function applyIslandRules(){{
-      if(!map.hasLayer(larea)) return;
+      if(!safeHas(larea)) return;
       var z = map.getZoom();
 
       islandRules.forEach(function(r){{
         // 全島name
         if(z >= NAME_ZOOM){{
-          if(map.hasLayer(r.dot)) map.removeLayer(r.dot);
-          if(!map.hasLayer(r.label)) r.label.addTo(map);
+          if(safeHas(r.dot)) map.removeLayer(r.dot);
+          if(!safeHas(r.label)) r.label.addTo(map);
           return;
         }}
 
@@ -440,16 +515,16 @@ template = f"""
         if(r.minz !== null){{
           var minz = r.minz - mobileBoost;
           if(z < minz){{
-            if(map.hasLayer(r.dot)) map.removeLayer(r.dot);
-            if(map.hasLayer(r.label)) map.removeLayer(r.label);
+            if(safeHas(r.dot)) map.removeLayer(r.dot);
+            if(safeHas(r.label)) map.removeLayer(r.label);
           }} else {{
-            if(map.hasLayer(r.dot)) map.removeLayer(r.dot);
-            if(!map.hasLayer(r.label)) r.label.addTo(map);
+            if(safeHas(r.dot)) map.removeLayer(r.dot);
+            if(!safeHas(r.label)) r.label.addTo(map);
           }}
         }} else {{
           // 通常島は dot
-          if(!map.hasLayer(r.dot)) r.dot.addTo(map);
-          if(map.hasLayer(r.label)) map.removeLayer(r.label);
+          if(!safeHas(r.dot)) r.dot.addTo(map);
+          if(safeHas(r.label)) map.removeLayer(r.label);
         }}
       }});
     }}
@@ -458,13 +533,15 @@ template = f"""
     map.on("zoomend", applyIslandRules);
 
     // トグル
-    bs.onclick=function(){{map.hasLayer(ls)?(map.removeLayer(ls),set(bs,false,"on-sake")):(map.addLayer(ls),set(bs,true,"on-sake"));}};
-    bj.onclick=function(){{map.hasLayer(lj)?(map.removeLayer(lj),set(bj,false,"on-jinja")):(map.addLayer(lj),set(bj,true,"on-jinja"));}};
-    ba.onclick=function(){{map.hasLayer(larch)?(map.removeLayer(larch),set(ba,false,"on-arch")):(map.addLayer(larch),set(ba,true,"on-arch"));}};
-    bt.onclick=function(){{map.hasLayer(lart)?(map.removeLayer(lart),set(bt,false,"on-art")):(map.addLayer(lart),set(bt,true,"on-art"));}};
-    bm.onclick=function(){{map.hasLayer(lm)?(map.removeLayer(lm),set(bm,false,"on-matsuri")):(map.addLayer(lm),set(bm,true,"on-matsuri"));}};
+    bs.onclick=function(){{ toggle(ls, bs, "on-sake"); }};
+    bj.onclick=function(){{ toggle(lj, bj, "on-jinja"); }};
+    ba.onclick=function(){{ toggle(larch, ba, "on-arch"); }};
+    bc.onclick=function(){{ toggle(lcity, bc, "on-cityscape"); }};
+    bt.onclick=function(){{ toggle(lart, bt, "on-art"); }};
+    bm.onclick=function(){{ toggle(lm, bm, "on-matsuri"); }};
+    bo.onclick=function(){{ toggle(lothers, bo, "on-others"); }};
     br.onclick=function(){{
-      if(map.hasLayer(larea)) {{
+      if(safeHas(larea)) {{
         map.removeLayer(larea);
         set(br,false,"on-area");
       }} else {{
